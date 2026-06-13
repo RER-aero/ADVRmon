@@ -31,7 +31,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     goldslime = { name = "enemy_slime_golden", spawnAs = "enemy_golden_slime", primaryType = "slime", secondaryType = "steel", damage = 4, critchance = .1, attacktype = "melee", isFlying = false },
     mimc = { name = "enemy_chest_mimic", spawnAs = "enemy_mimic", primaryType = "dark", secondaryType = "stone", damage = 6, critchance = .01, attacktype = "melee", isFlying = false },
     invincibletome = { name = "enemy_invincibility_tome", primaryType = "magic", secondaryType = "", damage = 0, critchance = 0, attacktype = "melee", isFlying = false },
-     shopguy = { name = "enemy_corrupted_shopkeeper", primaryType = "dark", secondaryType = "magic", damage = 8, critchance = 0, attacktype = "melee", isFlying = false },
+    shopguy = { name = "enemy_corrupted_shopkeeper", primaryType = "dark", secondaryType = "magic", damage = 8, critchance = 0, attacktype = "melee", isFlying = false },
     mask = { name = "enemy_shopkeeper_corrupted_mask", primaryType = "dark", secondaryType = "flying", damage = 0, critchance = 0, attacktype = "melee", isFlying = false },
 
 
@@ -163,10 +163,12 @@ function ADVR.onLoad()
     HasCritcalChanceAugment = false -- Z crystal
     HasMaxBandAugment = false
     HasTeraOrbAugment = false
+    HasShinyCharmAugment = false
     -- end augments --
+    ShinyEnemies = {}
+    BaseShinyChance = .01
 
     BallDistMult = 2 -- how far the orb goes when releasing a mon
-
     MaxSummons = 1   -- do not change this or terrible things will happen
     MonIsActive = false
 
@@ -178,8 +180,36 @@ function ADVR.onLoad()
         criticalChance = .1,
         attacktype = "",
         attackSpd = 1,
-        evasionChance = .05
+        evasionChance = .05,
+        isShiny = false,
     }
+    --For Shiny enemies:
+    local enemies = {}
+
+    for i = 0, #game.enemyRegistry.enemyRegistryEntries - 1 do
+        local registry = game.enemyRegistry.enemyRegistryEntries[i]
+
+        for j = 0, #registry.possibilities - 1 do
+            table.insert(enemies, registry.possibilities[j].objToSpawn)
+        end
+    end
+    pickup.AddPostObjectSpawnListenersRuntimeByObjects(enemies) --Keep track of all enemies
+end
+
+function ADVR.onPostObjectSpawn(object) --Shiny enemies
+    if object ~= nil then
+        if object == ActiveMonObj and ActiveMonStats.isShiny then
+            CreateShiny(object)
+            return object
+        end
+        local chance = BaseShinyChance
+        game.ShowMessageInWorld(tostring(chance), 2)
+        if math.random() <= chance then
+            CreateShiny(object)
+            --keep track of shiny modified enemies
+            return object
+        end
+    end
 end
 
 RelicsTaken = {}
@@ -375,9 +405,40 @@ function ADVR.onAfterBossAreaGenerated()
     end
 end
 
+function CreateShiny(obj)
+    table.insert(ShinyEnemies, obj)
+    local renderers = obj.GetComponentsInChildren(game.GetType("MeshRenderer"))
+    if renderers ~= nil then
+        for r = 0, renderers.Length - 1 do
+            renderers[r].material.EnableKeyword("_EMISSION")
+            renderers[r].material.SetColor("_EmissionColor", colors.Create(0.1, 0.1, 0.1, 0.05))
+        end
+    end
+end
+
 function ADVR.onGlobalTick()
     if MonIsActive and FunctionOnRepeat == nil then
         FunctionOnRepeat = pickup.CallFunctionOnRepeat("UpdateMon", 999999, 0.1)
+    end
+
+    if #ShinyEnemies > 0 then
+        for _, v in ipairs(ShinyEnemies) do
+            local renderers = v.GetComponentsInChildren(game.GetType("MeshRenderer"))
+            for r = 0, renderers.Length - 1 do
+                renderers[r].material.EnableKeyword("_EMISSION")
+                renderers[r].material.SetColor("_EmissionColor", colors.Create(0.1, 0.1, 0.1, 0.05))
+            end
+        end
+    end
+end
+
+function ADVR.onEntityDeath(livingBase)
+    if table.contains(ShinyEnemies, livingBase.gameObject) then
+        local pos = table.find(ShinyEnemies, livingBase.gameObject)
+        if livingBase == ActiveMonBase then
+            ActiveMonStats.isShiny = false
+        end
+        table.remove(ShinyEnemies, pos)
     end
 end
 
@@ -487,6 +548,13 @@ function MoveBullet(projectile, duration, startPos, endEnemy)
                 local newmon = HasAbrntVersion(ActiveMon)
                 ActiveMon = newmon
             end
+        end
+
+        ActiveMonStats.isShiny = false
+
+        if table.contains(ShinyEnemies, endEnemy.gameObject) then
+            ActiveMonStats.isShiny = true
+            table.remove(ShinyEnemies, table.find(ShinyEnemies, endEnemy.gameObject))
         end
         ActiveMonGetStats(ActiveMon)
         game.Delete(endEnemy.gameObject)
@@ -926,6 +994,11 @@ function Releasemon(mon)
             end
         end
         local obj = game.SpawnObjectNetwork(spawnName, forwardPos)
+
+        if ActiveMonStats.isShiny then
+            CreateShiny(obj.gameObject)
+        end
+
         ActiveMonObj = obj
         local base = obj.GetComponent_EnemyBase_()
         if table.contains(RelicsTaken, "hp_up") then
@@ -1219,4 +1292,13 @@ function table.contains(tbl, val)
         end
     end
     return false
+end
+
+function table.find(tbl, val)
+    for _, v in ipairs(tbl) do
+        if v == val then
+            return _
+        end
+    end
+    return -1
 end
