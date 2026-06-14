@@ -157,6 +157,8 @@ function ADVR.onLoad()
     HasFeatherBallAugment = false
     HasPremierBallAugment = false
     HasHealBallAugment = false
+    HasDreamBallAugment = false
+
     HasCritcalChanceAugment = false -- Z crystal
     HasMaxBandAugment = false
     HasTeraOrbAugment = false
@@ -406,6 +408,10 @@ function ADVR.onPickup()
     augment = game.progressHandler.GetProgressById("heal_ball")
 
     HasHealBallAugment = augment ~= nil and augment.eventsRegistered
+
+    augment = game.progressHandler.GetProgressById("dream_ball")
+
+    HasDreamBallAugment = augment ~= nil and augment.eventsRegistered
 
 
     if HasUltraBallAugment then
@@ -731,6 +737,10 @@ function Throwball()
         end
         if HasGuckBallAugment and (EnemyType.primary == "poison" or EnemyType.secondary == "poison") then
             chancetocatch = chancetocatch + .075
+        end
+        local anim = enemy.GetComponent_Animator_()
+          if HasDreamBallAugment and anim.speed == 0 then
+            chancetocatch = chancetocatch + .1
         end
         if HasLuxuryBallAugment then
             chancetocatch = chancetocatch +
