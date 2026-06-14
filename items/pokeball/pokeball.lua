@@ -128,8 +128,6 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
 
 }
 
-
-
 function ADVR.onLoad()
     pickup.name = "Pokeball"
     pickup.desc = "Your handy dandy pokeball for all your pokeball needs"
@@ -395,7 +393,8 @@ function ADVR.onPickup()
 
     augment = game.progressHandler.GetProgressById("shiny_charm")
 
-    HasShinyCharmAugment = augment ~= nil and augment.eventsRegistered
+   HasShinyCharmAugment = augment ~= nil and augment.eventsRegistered
+
 
 
     if HasUltraBallAugment then
