@@ -287,6 +287,12 @@ function ADVR.onPickupTaken(relic)
     if item == "miracle_seed" then
         table.insert(RelicsTaken, item)
     end
+    if item == "pinap_berry" then
+        table.insert(RelicsTaken, item)
+    end
+     if item == "silver_pinap_berry" then
+        table.insert(RelicsTaken, item)
+    end
 end
 
 function ModifyStatForAll(stat, fn)
@@ -393,7 +399,7 @@ function ADVR.onPickup()
 
     augment = game.progressHandler.GetProgressById("shiny_charm")
 
-   HasShinyCharmAugment = augment ~= nil and augment.eventsRegistered
+    HasShinyCharmAugment = augment ~= nil and augment.eventsRegistered
 
 
 
@@ -566,10 +572,25 @@ function MoveBullet(projectile, duration, startPos, endEnemy)
             table.remove(ShinyEnemies, table.find(ShinyEnemies, endEnemy.gameObject))
         end
         ActiveMonGetStats(ActiveMon)
+        local abr = string.match(tostring(ActiveMon), "abberrant")
+        onMonCaught(ActiveMon, ActiveMonStats.isShiny, abr, endPos)
         game.Delete(endEnemy.gameObject)
         game.Delete(projectile)
         game.itemInterpreter.currentUsable.currentCharge = game.itemInterpreter.currentUsable.amountUses
         game.activePickupSlot.UpdateChargeDisplay()
+    end
+end
+
+function onMonCaught(name, shiny, abrnt, pos)
+    if table.contains(RelicsTaken, "pinap_berry") then
+        for i = 3, math.random(5) do
+            game.SpawnObjectNetwork(objects.ITEM_COIN, pos)
+        end
+    end
+     if table.contains(RelicsTaken, "silver_pinap_berry") then
+        for i = 1, math.random(3) do
+            game.SpawnObjectNetwork(objects.ITEM_KEY, pos)
+        end
     end
 end
 
