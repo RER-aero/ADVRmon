@@ -130,8 +130,6 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
 
 }
 
-
-
 function ADVR.onLoad()
     pickup.name = "Pokeball"
     pickup.desc = "Your handy dandy pokeball for all your pokeball needs"
@@ -390,9 +388,19 @@ function ADVR.onPickup()
 
     HasTeraOrbAugment = augment ~= nil and augment.eventsRegistered
 
+    augment = game.progressHandler.GetProgressById("shiny_charm")
+
+    HasTeraOrbAugment = augment ~= nil and augment.eventsRegistered
+
+
 
     if HasUltraBallAugment then
         BaseChanceForCatch = BaseChanceForCatch + .1
+    end
+
+    
+    if HasShinyCharmAugment then
+        BaseShinyChance = .05
     end
 end
 
