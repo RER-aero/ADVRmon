@@ -194,22 +194,140 @@ function ADVR.onLoad()
         end
     end
     pickup.AddPostObjectSpawnListenersRuntimeByObjects(enemies) --Keep track of all enemies
+
+
+    base.AddPostObjectSpawnListenersRuntimeByStrings({ -- projectiles
+        objects.PROJECTILE_PLANT_4X,
+        objects.PROJECTILE_PLANT_HOMING
+    })
 end
 
 function ADVR.onPostObjectSpawn(object) --Shiny enemies
-    if object ~= nil then
+    if object == nil then
+        return
+    end
+
+    local Lbase = object.GetComponent_LivingBase_()
+    if Lbase == nil then
+
+    elseif Lbase.livingId == objects.PROJECTILE_PLANT_4X or Lbase.livingId == objects.PROJECTILE_PLANT_HOMING then
+        local allPlants = game.FindObjectsByTypeUnsorted(game.GetType("AI4WayShroom"))
+        local closestPlant = nil
+        local closestDistance = math.huge
+
+        if allPlants ~= nil and allPlants.Length > 0 then
+            for i = 0, allPlants.Length - 1 do
+                local e = allPlants[i]
+
+                local distance = vector3.Distance(object.transform.position, e.transform.position)
+                if distance < closestDistance then
+                    closestDistance = distance
+                    closestPlant = allPlants[i].gameObject
+                end
+            end
+        end
+
+        if not HomingDebugPrinted then
+            HomingDebugPrinted = true
+
+            local msg = "livingId: " .. tostring(Lbase.livingId)
+            msg = msg .. " | closestPlant nil: " .. tostring(closestPlant == nil)
+            if closestPlant ~= nil then
+                msg = msg .. " | name: " .. tostring(closestPlant.name)
+            end
+            msg = msg .. " | ActiveMonObj nil: " .. tostring(ActiveMonObj == nil)
+            if ActiveMonObj ~= nil and closestPlant ~= nil then
+                msg = msg .. " | match: " .. tostring(closestPlant == ActiveMonObj.gameObject)
+            end
+
+            game.ShowMessageInWorld(msg, 15)
+        end
+
+        if closestPlant ~= nil and ActiveMonObj ~= nil and closestPlant == ActiveMonObj.gameObject then
+            local target = getTargetEnemyForHealingHoming(object.transform.position)
+            if target ~= nil then
+                local homing = object.GetComponent_BulletHoming_()
+
+                if not HomingValuesDebugPrinted then
+                    HomingValuesDebugPrinted = true
+                    game.ShowMessageInWorld("BEFORE -> factor: " .. tostring(homing.homingFactor) .. " | maxSpeed: " .. tostring(homing.maxSpeed) .. " | target: " .. tostring(homing.homingTarget), 15)
+                end
+
+                homing.homingTarget = target
+                homing.homingFactor = homing.homingFactor * 16
+                homing.maxSpeed = homing.maxSpeed * 2
+
+                if not HomingValuesDebugPrintedAfter then
+                    HomingValuesDebugPrintedAfter = true
+                    game.ShowMessageInWorld("AFTER -> factor: " .. tostring(homing.homingFactor) .. " | maxSpeed: " .. tostring(homing.maxSpeed) .. " | target: " .. tostring(homing.homingTarget), 15)
+                end
+            else
+                game.ShowMessageInWorld("no target found, deleting projectile", 3)
+                game.Delete(object)
+            end
+        end
+    else
         if object == ActiveMonObj and ActiveMonStats.isShiny then
             CreateShiny(object)
             return object
         end
         local chance = BaseShinyChance
-        game.ShowMessageInWorld(tostring(chance), 2)
         if math.random() <= chance then
             CreateShiny(object)
             --keep track of shiny modified enemies
             return object
         end
     end
+end
+
+function getTargetEnemyForHealingHoming(position)
+    local enemiesToPick = {}
+    local totalSeen = 0
+
+    local ok, enemies = pcall(function()
+        return game.GetEnemiesInRadius(12, position, true, false)
+    end)
+
+    if not ok then
+        if not TargetSearchDebugPrinted then
+            TargetSearchDebugPrinted = true
+            game.ShowMessageInWorld("GetEnemiesInRadius ERROR: " .. tostring(enemies), 20)
+        end
+        enemies = nil
+    end
+
+    if enemies ~= nil then
+        for i = 0, enemies.Length - 1 do ---@diagnostic disable-line: undefined-field
+            local enemyLB = enemies[i]
+            if enemyLB ~= nil then
+                totalSeen = totalSeen + 1
+                if not string.find(enemyLB.gameObject.name, "enemy_og_plant_homing") then
+                    enemiesToPick[#enemiesToPick + 1] = enemyLB
+                end
+            end
+        end
+    end
+
+    if not TargetSearchDebugPrinted then
+        TargetSearchDebugPrinted = true
+        game.ShowMessageInWorld("totalSeen: " .. tostring(totalSeen) .. " | candidates: " .. tostring(#enemiesToPick), 15)
+    end
+
+    if #enemiesToPick > 0 then
+        local pickedEnemy = enemiesToPick[math.random(1, #enemiesToPick)]
+        -- reuse existing anchor if already created, otherwise make one
+        local existing = pickedEnemy.gameObject.transform.Find("CENTER_POINT_HOMING_TARGET")
+        if existing ~= nil then
+            return existing
+        else
+            local centerPoint = gameObject.__new("CENTER_POINT_HOMING_TARGET") ---@diagnostic disable-line: undefined-field
+            centerPoint.transform.SetParent(pickedEnemy.gameObject.transform, false)
+            centerPoint.name = "CENTER_POINT_HOMING_TARGET"
+            centerPoint.transform.position = pickedEnemy.GetCenterInWorld()
+            return centerPoint.transform
+        end
+    end
+    return nil
 end
 
 RelicsTaken = {}
@@ -284,6 +402,9 @@ function ADVR.onPickupTaken(relic)
         table.insert(RelicsTaken, item)
     end
     if item == "carbos" then
+        table.insert(RelicsTaken, item)
+    end
+    if item == "miracle_seed" then
         table.insert(RelicsTaken, item)
     end
 end
@@ -390,9 +511,16 @@ function ADVR.onPickup()
 
     HasTeraOrbAugment = augment ~= nil and augment.eventsRegistered
 
+    augment = game.progressHandler.GetProgressById("shiny_charm")
+
+    HasShinyCharmAugment = augment ~= nil and augment.eventsRegistered
+
 
     if HasUltraBallAugment then
         BaseChanceForCatch = BaseChanceForCatch + .1
+    end
+    if HasShinyCharmAugment then
+        BaseShinyChance = .05
     end
 end
 
@@ -809,7 +937,7 @@ end
 function CalcDamage(enemy)
     local damage = ActiveMonStats.damage
 
-    local mod = TypeDamage(enemy.livingId, ActiveMonStats.primaryType, ActiveMonStats.secondaryType)
+    local mod = TypeDamage(enemy.livingId, ActiveMonStats.primaryType, ActiveMonStats.secondaryType, true)
     damage = damage * mod
 
     if helperMethods.IsValidWithLuck(0, 1, ActiveMonStats.criticalChance) then
@@ -821,12 +949,12 @@ function CalcDamage(enemy)
     return math.ceil(damage)
 end
 
-function TypeDamage(enemy, primary, secondary)
+function TypeDamage(target, primary, secondary, MonAttack)
     local EnemyPrimaryType = ""
     local EnemySecondaryType = ""
     local modifier = 1
     for _, block in pairs(StatSheet) do
-        if enemy == block.name then
+        if target == block.name then
             EnemyPrimaryType = block.primaryType
             EnemySecondaryType = block.secondaryType
         end
@@ -861,9 +989,15 @@ function TypeDamage(enemy, primary, secondary)
     if primary == "poison" or secondary == "poison" then
         if EnemyPrimaryType == "plant" or EnemySecondaryType == "plant" then
             modifier = modifier + 0.2
+            if table.contains(RelicsTaken, "poison_barb") and MonAttack then
+                modifier = modifier + 0.02
+            end
         end
         if EnemyPrimaryType == "slime" or EnemySecondaryType == "slime" then
             modifier = modifier + 0.15
+            if table.contains(RelicsTaken, "poison_barb") and MonAttack then
+                modifier = modifier + 0.02
+            end
         end
         if EnemyPrimaryType == "crystal" or EnemySecondaryType == "crystal" then
             modifier = modifier - 0.2
@@ -875,9 +1009,15 @@ function TypeDamage(enemy, primary, secondary)
     if primary == "plant" or secondary == "plant" then
         if EnemyPrimaryType == "stone" or EnemySecondaryType == "stone" then
             modifier = modifier + 0.2
+            if table.contains(RelicsTaken, "miracle_seed") and MonAttack then
+                modifier = modifier + 0.02
+            end
         end
         if EnemyPrimaryType == "undead" or EnemySecondaryType == "undead" then
             modifier = modifier + 0.2
+            if table.contains(RelicsTaken, "miracle_seed") and MonAttack then
+                modifier = modifier + 0.02
+            end
         end
         if EnemyPrimaryType == "magic" or EnemySecondaryType == "magic" then
             modifier = modifier - 0.12
@@ -1122,7 +1262,7 @@ function Releasemon(mon)
                     v = GetEnemyTypes(closeEnemies[i])
 
                     local dmg = Getdmgstat(closeEnemies[i].GetComponent_EnemyBase_().livingId)
-                    local mod = TypeDamage(ActiveMonBase.livingId, v.primary, v.secondary)
+                    local mod = TypeDamage(ActiveMonBase.livingId, v.primary, v.secondary, false)
                     if HasTeraOrbAugment and mod > 1 then
                         mod = 1
                     end
