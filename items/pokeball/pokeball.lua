@@ -5,8 +5,6 @@
 -- If you are here because you are curious on how it works, let me know when you figure it out because im curious too
 
 
-
-
 local ActiveSummons = {}
 local FunctionOnRepeat = nil
 StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, stone, crystal, dark, flying, fire, steel
@@ -195,18 +193,20 @@ function ADVR.onLoad()
 end
 
 function ADVR.onPostObjectSpawn(object) --Shiny enemies
-    if object ~= nil then
-        if object == ActiveMonObj and ActiveMonStats.isShiny then
-            CreateShiny(object)
-            return object
-        end
-        local chance = BaseShinyChance
-        game.ShowMessageInWorld(tostring(chance), 2)
-        if math.random() <= chance then
-            CreateShiny(object)
-            --keep track of shiny modified enemies
-            return object
-        end
+    if object == nil then
+        return
+    end
+
+
+    if object == ActiveMonObj and ActiveMonStats.isShiny then
+        CreateShiny(object)
+        return object
+    end
+    local chance = BaseShinyChance
+    if math.random() <= chance then
+        CreateShiny(object)
+        --keep track of shiny modified enemies
+        return object
     end
 end
 
@@ -282,6 +282,9 @@ function ADVR.onPickupTaken(relic)
         table.insert(RelicsTaken, item)
     end
     if item == "carbos" then
+        table.insert(RelicsTaken, item)
+    end
+    if item == "miracle_seed" then
         table.insert(RelicsTaken, item)
     end
 end
@@ -390,15 +393,13 @@ function ADVR.onPickup()
 
     augment = game.progressHandler.GetProgressById("shiny_charm")
 
-    HasTeraOrbAugment = augment ~= nil and augment.eventsRegistered
+   HasShinyCharmAugment = augment ~= nil and augment.eventsRegistered
 
 
 
     if HasUltraBallAugment then
         BaseChanceForCatch = BaseChanceForCatch + .1
     end
-
-    
     if HasShinyCharmAugment then
         BaseShinyChance = .05
     end
@@ -817,7 +818,7 @@ end
 function CalcDamage(enemy)
     local damage = ActiveMonStats.damage
 
-    local mod = TypeDamage(enemy.livingId, ActiveMonStats.primaryType, ActiveMonStats.secondaryType)
+    local mod = TypeDamage(enemy.livingId, ActiveMonStats.primaryType, ActiveMonStats.secondaryType, true)
     damage = damage * mod
 
     if helperMethods.IsValidWithLuck(0, 1, ActiveMonStats.criticalChance) then
@@ -829,12 +830,12 @@ function CalcDamage(enemy)
     return math.ceil(damage)
 end
 
-function TypeDamage(enemy, primary, secondary)
+function TypeDamage(target, primary, secondary, MonAttack)
     local EnemyPrimaryType = ""
     local EnemySecondaryType = ""
     local modifier = 1
     for _, block in pairs(StatSheet) do
-        if enemy == block.name then
+        if target == block.name then
             EnemyPrimaryType = block.primaryType
             EnemySecondaryType = block.secondaryType
         end
@@ -869,9 +870,15 @@ function TypeDamage(enemy, primary, secondary)
     if primary == "poison" or secondary == "poison" then
         if EnemyPrimaryType == "plant" or EnemySecondaryType == "plant" then
             modifier = modifier + 0.2
+            if table.contains(RelicsTaken, "poison_barb") and MonAttack then
+                modifier = modifier + 0.02
+            end
         end
         if EnemyPrimaryType == "slime" or EnemySecondaryType == "slime" then
             modifier = modifier + 0.15
+            if table.contains(RelicsTaken, "poison_barb") and MonAttack then
+                modifier = modifier + 0.02
+            end
         end
         if EnemyPrimaryType == "crystal" or EnemySecondaryType == "crystal" then
             modifier = modifier - 0.2
@@ -883,9 +890,15 @@ function TypeDamage(enemy, primary, secondary)
     if primary == "plant" or secondary == "plant" then
         if EnemyPrimaryType == "stone" or EnemySecondaryType == "stone" then
             modifier = modifier + 0.2
+            if table.contains(RelicsTaken, "miracle_seed") and MonAttack then
+                modifier = modifier + 0.02
+            end
         end
         if EnemyPrimaryType == "undead" or EnemySecondaryType == "undead" then
             modifier = modifier + 0.2
+            if table.contains(RelicsTaken, "miracle_seed") and MonAttack then
+                modifier = modifier + 0.02
+            end
         end
         if EnemyPrimaryType == "magic" or EnemySecondaryType == "magic" then
             modifier = modifier - 0.12
@@ -1130,7 +1143,7 @@ function Releasemon(mon)
                     v = GetEnemyTypes(closeEnemies[i])
 
                     local dmg = Getdmgstat(closeEnemies[i].GetComponent_EnemyBase_().livingId)
-                    local mod = TypeDamage(ActiveMonBase.livingId, v.primary, v.secondary)
+                    local mod = TypeDamage(ActiveMonBase.livingId, v.primary, v.secondary, false)
                     if HasTeraOrbAugment and mod > 1 then
                         mod = 1
                     end
