@@ -1,6 +1,6 @@
 function ADVR.onLoad()
-    pickup.name = "Miracle Seed"
-    pickup.desc = "An item to be held by a Pokémon. It's a seed imbued with life-force that boosts the power of the holder's Grass-type attacks."
+    pickup.name = "Metal Coat"
+    pickup.desc = "An item to be held by a Pokémon. It's a special metallic coating that boosts the power of the holder's Steel-type attacks. "
 	pickup.weight = 85
 	pickup.tier = 1
 	pickup.maxAmount = 10

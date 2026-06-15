@@ -156,6 +156,9 @@ function ADVR.onLoad()
     HasLuxuryBallAugment = false
     HasFeatherBallAugment = false
     HasPremierBallAugment = false
+    HasHealBallAugment = false
+    HasDreamBallAugment = false
+
     HasCritcalChanceAugment = false -- Z crystal
     HasMaxBandAugment = false
     HasTeraOrbAugment = false
@@ -178,6 +181,7 @@ function ADVR.onLoad()
         attackSpd = 1,
         evasionChance = .05,
         isShiny = false,
+        currentHP = 1,
     }
     --For Shiny enemies:
     local enemies = {}
@@ -287,6 +291,18 @@ function ADVR.onPickupTaken(relic)
     if item == "miracle_seed" then
         table.insert(RelicsTaken, item)
     end
+     if item == "poison_barb" then
+        table.insert(RelicsTaken, item)
+    end
+    if item == "pinap_berry" then
+        table.insert(RelicsTaken, item)
+    end
+    if item == "silver_pinap_berry" then
+        table.insert(RelicsTaken, item)
+    end
+    if item == "metal_coat" then
+        table.insert(RelicsTaken, item)
+    end
 end
 
 function ModifyStatForAll(stat, fn)
@@ -393,8 +409,15 @@ function ADVR.onPickup()
 
     augment = game.progressHandler.GetProgressById("shiny_charm")
 
-   HasShinyCharmAugment = augment ~= nil and augment.eventsRegistered
+    HasShinyCharmAugment = augment ~= nil and augment.eventsRegistered
 
+    augment = game.progressHandler.GetProgressById("heal_ball")
+
+    HasHealBallAugment = augment ~= nil and augment.eventsRegistered
+
+    augment = game.progressHandler.GetProgressById("dream_ball")
+
+    HasDreamBallAugment = augment ~= nil and augment.eventsRegistered
 
 
     if HasUltraBallAugment then
@@ -507,6 +530,10 @@ function RecallBullet(projectile, duration, startPos, friendObj)
     if friendObj ~= nil then
         local friendBase = friendObj.GetComponent_EnemyBase_()
         if friendBase ~= nil and not friendBase.isDead then
+            ActiveMonStats.currentHP = friendBase.Health
+            if HasHealBallAugment then
+                ActiveMonStats.currentHP = friendBase.MaxHealth
+            end
             game.Delete(friendObj)
             game.itemInterpreter.currentUsable.currentCharge = game.itemInterpreter.currentUsable.amountUses
             game.activePickupSlot.UpdateChargeDisplay()
@@ -565,11 +592,26 @@ function MoveBullet(projectile, duration, startPos, endEnemy)
             ActiveMonStats.isShiny = true
             table.remove(ShinyEnemies, table.find(ShinyEnemies, endEnemy.gameObject))
         end
-        ActiveMonGetStats(ActiveMon)
+        ActiveMonGetStats(ActiveMon, enemyBase.MaxHealth)
+        local abr = string.match(tostring(ActiveMon), "abberrant")
+        onMonCaught(ActiveMon, ActiveMonStats.isShiny, abr, endPos)
         game.Delete(endEnemy.gameObject)
         game.Delete(projectile)
         game.itemInterpreter.currentUsable.currentCharge = game.itemInterpreter.currentUsable.amountUses
         game.activePickupSlot.UpdateChargeDisplay()
+    end
+end
+
+function onMonCaught(name, shiny, abrnt, pos)
+    if table.contains(RelicsTaken, "pinap_berry") then
+        for i = 3, math.random(5) do
+            game.SpawnObjectNetwork(objects.ITEM_COIN, pos)
+        end
+    end
+    if table.contains(RelicsTaken, "silver_pinap_berry") then
+        for i = 1, math.random(3) do
+            game.SpawnObjectNetwork(objects.ITEM_KEY, pos)
+        end
     end
 end
 
@@ -702,10 +744,13 @@ function Throwball()
         if HasGuckBallAugment and (EnemyType.primary == "poison" or EnemyType.secondary == "poison") then
             chancetocatch = chancetocatch + .075
         end
+        local anim = enemy.GetComponent_Animator_()
+          if HasDreamBallAugment and anim.speed == 0 then
+            chancetocatch = chancetocatch + .1
+        end
         if HasLuxuryBallAugment then
             chancetocatch = chancetocatch +
-                player.currentCash /
-                2000 -- If the player has 100 coins they will gain a 5% chance
+                player.currentCash / 2000 -- If the player has 100 coins they will gain a 5% chance
         end
         if HasQuickBallAugment and IsFirstCatch then
             chancetocatch = 1
@@ -749,7 +794,7 @@ function Throwball()
     end
 end
 
-function ActiveMonGetStats(mon)
+function ActiveMonGetStats(mon, hp)
     local name = mon
 
     for _, stat in pairs(StatSheet) do
@@ -763,6 +808,7 @@ function ActiveMonGetStats(mon)
             ActiveMonStats.isFlying = stat.isFlying
             ActiveMonStats.attacktype = stat.attacktype
             ActiveMonStats.attackSpd = 1
+            ActiveMonStats.currentHP = hp
             if table.contains(RelicsTaken, "carbos") then
                 ActiveMonStats.attackSpd = .85
             end
@@ -868,17 +914,16 @@ function TypeDamage(target, primary, secondary, MonAttack)
         end
     end
     if primary == "poison" or secondary == "poison" then
-        if EnemyPrimaryType == "plant" or EnemySecondaryType == "plant" then
-            modifier = modifier + 0.2
-            if table.contains(RelicsTaken, "poison_barb") and MonAttack then
+        if table.contains(RelicsTaken, "poison_barb") and MonAttack then
                 modifier = modifier + 0.02
             end
+        if EnemyPrimaryType == "plant" or EnemySecondaryType == "plant" then
+            modifier = modifier + 0.2
+            
         end
         if EnemyPrimaryType == "slime" or EnemySecondaryType == "slime" then
             modifier = modifier + 0.15
-            if table.contains(RelicsTaken, "poison_barb") and MonAttack then
-                modifier = modifier + 0.02
-            end
+            
         end
         if EnemyPrimaryType == "crystal" or EnemySecondaryType == "crystal" then
             modifier = modifier - 0.2
@@ -888,17 +933,16 @@ function TypeDamage(target, primary, secondary, MonAttack)
         end
     end
     if primary == "plant" or secondary == "plant" then
-        if EnemyPrimaryType == "stone" or EnemySecondaryType == "stone" then
-            modifier = modifier + 0.2
-            if table.contains(RelicsTaken, "miracle_seed") and MonAttack then
+         if table.contains(RelicsTaken, "miracle_seed") and MonAttack then
                 modifier = modifier + 0.02
             end
+        if EnemyPrimaryType == "stone" or EnemySecondaryType == "stone" then
+            modifier = modifier + 0.2
+           
         end
         if EnemyPrimaryType == "undead" or EnemySecondaryType == "undead" then
             modifier = modifier + 0.2
-            if table.contains(RelicsTaken, "miracle_seed") and MonAttack then
-                modifier = modifier + 0.02
-            end
+           
         end
         if EnemyPrimaryType == "magic" or EnemySecondaryType == "magic" then
             modifier = modifier - 0.12
@@ -1043,7 +1087,9 @@ function Releasemon(mon)
         end
         ActiveMonBase = base
         local ai = obj.GetComponent_AI_()
-
+        if ActiveMonStats.currentHP < ActiveMonBase.Health then
+            ActiveMonBase.Health = ActiveMonStats.currentHP
+        end
         base.touchDamage = 0
 
         table.insert(ActiveSummons, {
