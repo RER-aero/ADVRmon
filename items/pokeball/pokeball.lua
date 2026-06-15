@@ -291,10 +291,16 @@ function ADVR.onPickupTaken(relic)
     if item == "miracle_seed" then
         table.insert(RelicsTaken, item)
     end
+     if item == "poison_barb" then
+        table.insert(RelicsTaken, item)
+    end
     if item == "pinap_berry" then
         table.insert(RelicsTaken, item)
     end
     if item == "silver_pinap_berry" then
+        table.insert(RelicsTaken, item)
+    end
+    if item == "metal_coat" then
         table.insert(RelicsTaken, item)
     end
 end
@@ -908,17 +914,16 @@ function TypeDamage(target, primary, secondary, MonAttack)
         end
     end
     if primary == "poison" or secondary == "poison" then
-        if EnemyPrimaryType == "plant" or EnemySecondaryType == "plant" then
-            modifier = modifier + 0.2
-            if table.contains(RelicsTaken, "poison_barb") and MonAttack then
+        if table.contains(RelicsTaken, "poison_barb") and MonAttack then
                 modifier = modifier + 0.02
             end
+        if EnemyPrimaryType == "plant" or EnemySecondaryType == "plant" then
+            modifier = modifier + 0.2
+            
         end
         if EnemyPrimaryType == "slime" or EnemySecondaryType == "slime" then
             modifier = modifier + 0.15
-            if table.contains(RelicsTaken, "poison_barb") and MonAttack then
-                modifier = modifier + 0.02
-            end
+            
         end
         if EnemyPrimaryType == "crystal" or EnemySecondaryType == "crystal" then
             modifier = modifier - 0.2
@@ -928,17 +933,16 @@ function TypeDamage(target, primary, secondary, MonAttack)
         end
     end
     if primary == "plant" or secondary == "plant" then
-        if EnemyPrimaryType == "stone" or EnemySecondaryType == "stone" then
-            modifier = modifier + 0.2
-            if table.contains(RelicsTaken, "miracle_seed") and MonAttack then
+         if table.contains(RelicsTaken, "miracle_seed") and MonAttack then
                 modifier = modifier + 0.02
             end
+        if EnemyPrimaryType == "stone" or EnemySecondaryType == "stone" then
+            modifier = modifier + 0.2
+           
         end
         if EnemyPrimaryType == "undead" or EnemySecondaryType == "undead" then
             modifier = modifier + 0.2
-            if table.contains(RelicsTaken, "miracle_seed") and MonAttack then
-                modifier = modifier + 0.02
-            end
+           
         end
         if EnemyPrimaryType == "magic" or EnemySecondaryType == "magic" then
             modifier = modifier - 0.12
