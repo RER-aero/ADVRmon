@@ -206,8 +206,9 @@ function ADVR.onPostObjectSpawn(object) --Shiny enemies
         CreateShiny(object)
         return object
     end
+
     local chance = BaseShinyChance
-    if math.random() <= chance then
+    if helperMethods.IsValidWithLuck(chance, chance, chance) then
         CreateShiny(object)
         --keep track of shiny modified enemies
         return object
@@ -278,7 +279,7 @@ function ADVR.onPickupTaken(relic)
             table.insert(RelicsTaken, item)
         end
     end
-    if item == "hp_up" then
+    if item == "hp_up" then --increases hp for all pokemon
         table.insert(RelicsTaken, item)
     end
     if item == "protein" then
@@ -286,12 +287,15 @@ function ADVR.onPickupTaken(relic)
         table.insert(RelicsTaken, item)
     end
     if item == "carbos" then
+        ActiveMonStats.attackSpd = .85
         table.insert(RelicsTaken, item)
     end
     if item == "miracle_seed" then
+        SetStatByType("plant", "damage", function(val) return val + 1 end)
         table.insert(RelicsTaken, item)
     end
-     if item == "poison_barb" then
+    if item == "poison_barb" then
+        SetStatByType("poison", "damage", function(val) return val + 1 end)
         table.insert(RelicsTaken, item)
     end
     if item == "pinap_berry" then
@@ -301,6 +305,13 @@ function ADVR.onPickupTaken(relic)
         table.insert(RelicsTaken, item)
     end
     if item == "metal_coat" then
+        SetStatByType("steel", "damage", function(val) return val + 1 end)
+        table.insert(RelicsTaken, item)
+    end
+      if item == "potion" then
+        if ActiveMonBase.Health < ActiveMonBase.MaxHealth then
+        ActiveMonStats.currentHP = ActiveMonStats.currentHP + 3
+        end
         table.insert(RelicsTaken, item)
     end
 end
@@ -429,6 +440,7 @@ function ADVR.onPickup()
 end
 
 function ADVR.onPickupActivate()
+    game.ShowMessageInWorld(tostring(BaseShinyChance), .1)
 end
 
 function ADVR.onAfterBossAreaGenerated()
@@ -443,7 +455,8 @@ function CreateShiny(obj)
     if renderers ~= nil then
         for r = 0, renderers.Length - 1 do
             renderers[r].material.EnableKeyword("_EMISSION")
-            renderers[r].material.SetColor("_EmissionColor", colors.Create(0.1, 0.1, 0.1, 0.05))
+          renderers[r].material.color = colors.Create(.565, .69, 1, .651)
+            -- renderers[r].material.SetColor("_EmissionColor", colors.Create(0.1, 0.1, 0.1, 0.05))
         end
     end
 end
@@ -452,13 +465,14 @@ function ADVR.onGlobalTick()
     if MonIsActive and FunctionOnRepeat == nil then
         FunctionOnRepeat = pickup.CallFunctionOnRepeat("UpdateMon", 999999, 0.1)
     end
-
     if #ShinyEnemies > 0 then
         for _, v in ipairs(ShinyEnemies) do
+         
             local renderers = v.GetComponentsInChildren(game.GetType("MeshRenderer"))
             for r = 0, renderers.Length - 1 do
                 renderers[r].material.EnableKeyword("_EMISSION")
-                renderers[r].material.SetColor("_EmissionColor", colors.Create(0.1, 0.1, 0.1, 0.05))
+          renderers[r].material.color = colors.Create(.565, .69, 1, .651)
+            --    renderers[r].material.SetColor("_EmissionColor", colors.Create(0.1, 0.1, 0.1, 0.05))
             end
         end
     end
@@ -745,7 +759,7 @@ function Throwball()
             chancetocatch = chancetocatch + .075
         end
         local anim = enemy.GetComponent_Animator_()
-          if HasDreamBallAugment and anim.speed == 0 then
+        if HasDreamBallAugment and anim.speed == 0 then
             chancetocatch = chancetocatch + .1
         end
         if HasLuxuryBallAugment then
@@ -807,11 +821,8 @@ function ActiveMonGetStats(mon, hp)
             ActiveMonStats.damage = stat.damage
             ActiveMonStats.isFlying = stat.isFlying
             ActiveMonStats.attacktype = stat.attacktype
-            ActiveMonStats.attackSpd = 1
             ActiveMonStats.currentHP = hp
-            if table.contains(RelicsTaken, "carbos") then
-                ActiveMonStats.attackSpd = .85
-            end
+
 
             ActiveMonStats.evasionChance = .05
         end
@@ -914,16 +925,11 @@ function TypeDamage(target, primary, secondary, MonAttack)
         end
     end
     if primary == "poison" or secondary == "poison" then
-        if table.contains(RelicsTaken, "poison_barb") and MonAttack then
-                modifier = modifier + 0.02
-            end
         if EnemyPrimaryType == "plant" or EnemySecondaryType == "plant" then
             modifier = modifier + 0.2
-            
         end
         if EnemyPrimaryType == "slime" or EnemySecondaryType == "slime" then
             modifier = modifier + 0.15
-            
         end
         if EnemyPrimaryType == "crystal" or EnemySecondaryType == "crystal" then
             modifier = modifier - 0.2
@@ -933,16 +939,11 @@ function TypeDamage(target, primary, secondary, MonAttack)
         end
     end
     if primary == "plant" or secondary == "plant" then
-         if table.contains(RelicsTaken, "miracle_seed") and MonAttack then
-                modifier = modifier + 0.02
-            end
         if EnemyPrimaryType == "stone" or EnemySecondaryType == "stone" then
             modifier = modifier + 0.2
-           
         end
         if EnemyPrimaryType == "undead" or EnemySecondaryType == "undead" then
             modifier = modifier + 0.2
-           
         end
         if EnemyPrimaryType == "magic" or EnemySecondaryType == "magic" then
             modifier = modifier - 0.12
@@ -1066,10 +1067,7 @@ function Releasemon(mon)
 
         ActiveMonObj = obj
         local base = obj.GetComponent_EnemyBase_()
-        if table.contains(RelicsTaken, "hp_up") then
-            base.MaxHealth = base.MaxHealth + 3
-            base.Health = base.MaxHealth
-        end
+
         if HasMaxBandAugment then
             base.MaxHealth = math.ceil(base.MaxHealth * 1.5)
             base.Health = base.MaxHealth
@@ -1084,6 +1082,10 @@ function Releasemon(mon)
                 mult = 5
             end
             ActiveMonObj.GetComponent_Transform_().localScale = ActiveMonObj.GetComponent_Transform_().localScale * mult
+        end
+        if table.contains(RelicsTaken, "hp_up") then
+            base.MaxHealth = base.MaxHealth + 3
+            base.Health = base.MaxHealth
         end
         ActiveMonBase = base
         local ai = obj.GetComponent_AI_()
