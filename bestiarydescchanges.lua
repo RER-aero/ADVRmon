@@ -230,7 +230,7 @@ local uiRoot = gameObject.Find("UI")
 			local mmBtnImage = mmButton.GetComponent(game.GetType("UnityEngine.UI.Image"))
 			if mmBtnImage ~= nil then
 				local mmC = mmBtnImage.color
-				if mmC.r + mmC.b < mmC.g then -- and IN_SHIFTED_FLOOR()
+				if mmC.r + mmC.b < mmC.g then 
 					smButton.GetComponent(game.GetType("UnityEngine.UI.Button")).onClick.Invoke()
 					game.ShowMessageInWorld(string.reverse(">roloc/<>b/<!detceteD MM>b<>0000ff#=roloc<") .. "\n" .. string.reverse(">ezis/<.gniyalp eunitnoc ot redro ni gnittes eht elbasid esaelP .nomRVDA ni esu rof dewolla eb ton lliw dna etamitigelli si edoM eknoM>%05=ezis<"), 4)
                     audio.PlaySoundNetwork(sounds.SFX_DEAFENING_BELL, player.transform.position)
