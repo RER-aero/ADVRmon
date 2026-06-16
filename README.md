@@ -23,6 +23,10 @@ There is a small **effectiveness system** which will  boost or weaken your Pokem
 - **Relics**, Relics have been added to buff your pokemon through your perilous adventure in the dungeon
 
 - **Milestones**, A few milestones to give some extra rewards and as a way to keep track of your progress as a pokemon trainer.
+
+- **Shiny Enemies**, some enemies will have a blueish tint to them, does nothing but hey, it looks cool ;)
+
+
 ### Warning
 - Ranged enemies/ ones that do not move, will do pretty much nothing unless you spawn them very close to your target, also if their projectiles are tracking projectiles, they will still lock onto you. So my suggestion, catch enemies that are mobile.
 - Some relics like thundering gong will hurt your pokemon, so choose your relics with care
