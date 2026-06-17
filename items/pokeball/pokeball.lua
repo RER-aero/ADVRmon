@@ -516,9 +516,7 @@ function PutMonBackInBall() --When returning a pokemon back to the ball (mark) -
     local friend = ActiveMonObj
     local friendBase = friend.GetComponent_EnemyBase_()
 
-    if friend.GetComponent_EnemyBase_().IsInvincible then
-        return
-    end
+   
     audio.PlaySoundLocal(sounds.ENEMY_ID_SLIME_BULLET_SHOOT, game.playerController.rightHand.transform.position)
 
     local startPos = game.playerController.rightHand.transform.position
@@ -565,9 +563,10 @@ function RecallBullet(projectile, duration, startPos, friendObj)
             if HasHealBallAugment then
                 ActiveMonStats.currentHP = friendBase.MaxHealth
             end
-            game.Delete(friendObj)
-            game.itemInterpreter.currentUsable.currentCharge = game.itemInterpreter.currentUsable.amountUses
+             game.itemInterpreter.currentUsable.currentCharge = game.itemInterpreter.currentUsable.amountUses
             game.activePickupSlot.UpdateChargeDisplay()
+            game.Delete(friendObj)
+           
         end
     end
 
