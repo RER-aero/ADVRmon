@@ -4,7 +4,7 @@
 
 -- If you are here because you are curious on how it works, let me know when you figure it out because im curious too
 
-
+TESTING = false
 local ActiveSummons = {}
 local FunctionOnRepeat = nil
 StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, stone, crystal, dark, flying, fire, steel
@@ -44,7 +44,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     IDexplodinggrub = { name = "enemy_id_exploding_maggot", primaryType = "poison", secondaryType = "", damage = 4, critchance = .15, attacktype = "melee", isFlying = false },
     IDbouncebat = { name = "abberrant_id_bat", primaryType = "flying", secondaryType = "stone", damage = 3, critchance = .15, attacktype = "melee", isFlying = true },
     IDbat = { name = "enemy_id_bat", primaryType = "flying", secondaryType = "", damage = 1, critchance = .2234, attacktype = "melee", isFlying = true },
-    IDgreatslime = { name = "abberrant_id_slime_big", primaryType = "slime", secondaryType = "plant", damage = 3, critchance = .15, attacktype = "melee", isFlying = false },
+    IDgreatslime = { name = "abberrant_id_slime_big", primaryType = "slime", secondaryType = "dark", damage = 3, critchance = .15, attacktype = "melee", isFlying = false },
 
     NSfly = { name = "enemy_ns_fly", primaryType = "flying", secondaryType = "", damage = 3, critchance = .15, attacktype = "melee", isFlying = true },
     NSflyhive = { name = "enemy_ns_fly_hive", primaryType = "dark", secondaryType = "flying", damage = 3, critchance = .15, attacktype = "ranged", isFlying = false },
@@ -56,6 +56,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     NSwight = { name = "enemy_ns_wight_drowned", primaryType = "undead", secondaryType = "poison", damage = 5, critchance = .15, attacktype = "melee", isFlying = false },
     NSgrub = { name = "enemy_ns_maggot", primaryType = "poison", secondaryType = "", damage = 4, critchance = .15, attacktype = "melee", isFlying = false },
     queenfly = { name = "boss_fly_hive", primaryType = "flying", secondaryType = "poison", damage = 6, critchance = .35, attacktype = "melee", isFlying = true },
+    NSsprig = { name = "enemy_poi_poison_sentry", primaryType = "poison", secondaryType = "plant", damage = 5, critchance = .15, attacktype = "ranged", isFlying = false },
 
     FGtomeofmagic = { name = "enemy_fg_book", primaryType = "magic", secondaryType = "", damage = 3, critchance = .15, attacktype = "ranged", isFlying = false },
     FGtomeofsorcery = { name = "enemy_fg_book_exploding", primaryType = "magic", secondaryType = "fire", damage = 4.5, critchance = .12, attacktype = "ranged", isFlying = false },
@@ -124,6 +125,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     PCdemonslime = { name = "abberrant_pc_slime", spawnAs = "enemy_fg_slime_phase", primaryType = "slime", secondaryType = "dark", damage = 7, critchance = .02, attacktype = "melee", isFlying = false },
     PCcoral = { name = "abberrant_pc_wisp_fly", spawnAs = "enemy_fg_wisp", primaryType = "magic", secondaryType = "flying", damage = 5, critchance = .2, attacktype = "melee", isFlying = true },
     PCprofanewiusp = { name = "abberrant_pc_wisp_big", spawnAs = "enemy_fg_wisp", primaryType = "magic", secondaryType = "dark", damage = 7, critchance = .2, attacktype = "melee", isFlying = true },
+    PCdevilpris = { name = "abberrant_pc_rotating_beam", spawnAs = "enemy_fg_targeting_beam", primaryType = "magic", secondaryType = "dark", damage = 6, critchance = .1, attacktype = "ranged", isFlying = false },
 
 
 }
@@ -218,7 +220,9 @@ end
 RelicsTaken = {}
 function ADVR.onPickupTaken(relic)
     local item = relic.rolledItem.id
+    if TESTING then
     game.ShowMessageInWorld(item, 1)
+    end
     if item == "x_attack" then
         if ActiveMonObj ~= nil then
             ActiveMonStats.damage = ActiveMonStats.damage + 3
@@ -308,9 +312,21 @@ function ADVR.onPickupTaken(relic)
         SetStatByType("steel", "damage", function(val) return val + 1 end)
         table.insert(RelicsTaken, item)
     end
-      if item == "potion" then
+    if item == "potion" then
         if ActiveMonBase.Health < ActiveMonBase.MaxHealth then
-        ActiveMonStats.currentHP = ActiveMonStats.currentHP + 3
+            ActiveMonStats.currentHP = ActiveMonStats.currentHP + 3
+        end
+        table.insert(RelicsTaken, item)
+    end
+    if item == "super_potion" then
+        if ActiveMonBase.Health < ActiveMonBase.MaxHealth then
+            ActiveMonStats.currentHP = ActiveMonStats.currentHP + 6
+        end
+        table.insert(RelicsTaken, item)
+    end
+    if item == "max_potion" then
+        if ActiveMonBase.Health < ActiveMonBase.MaxHealth then
+            ActiveMonStats.currentHP = ActiveMonStats.MaxHealth
         end
         table.insert(RelicsTaken, item)
     end
@@ -338,7 +354,7 @@ end
 
 function ADVR.onPickup()
     pickup.RegisterUsable()
-
+    game.inventory.currentSecondaryWeapon.AsSwordBase().bladeCreator.transform.localScale = vector3.__new(1, 1.35, 1)
 
     game.itemInterpreter.currentUsable.currentCharge = game.itemInterpreter.currentUsable.amountUses
     game.activePickupSlot.UpdateChargeDisplay()
@@ -440,7 +456,9 @@ function ADVR.onPickup()
 end
 
 function ADVR.onPickupActivate()
+    if TESTING then
     game.ShowMessageInWorld(tostring(BaseShinyChance), .1)
+    end
 end
 
 function ADVR.onAfterBossAreaGenerated()
@@ -455,7 +473,7 @@ function CreateShiny(obj)
     if renderers ~= nil then
         for r = 0, renderers.Length - 1 do
             renderers[r].material.EnableKeyword("_EMISSION")
-          renderers[r].material.color = colors.Create(.565, .69, 1, .651)
+            renderers[r].material.color = colors.Create(.565, .69, 1, .651)
             -- renderers[r].material.SetColor("_EmissionColor", colors.Create(0.1, 0.1, 0.1, 0.05))
         end
     end
@@ -467,12 +485,11 @@ function ADVR.onGlobalTick()
     end
     if #ShinyEnemies > 0 then
         for _, v in ipairs(ShinyEnemies) do
-         
             local renderers = v.GetComponentsInChildren(game.GetType("MeshRenderer"))
             for r = 0, renderers.Length - 1 do
                 renderers[r].material.EnableKeyword("_EMISSION")
-          renderers[r].material.color = colors.Create(.565, .69, 1, .651)
-            --    renderers[r].material.SetColor("_EmissionColor", colors.Create(0.1, 0.1, 0.1, 0.05))
+                renderers[r].material.color = colors.Create(.565, .69, 1, .651)
+                --    renderers[r].material.SetColor("_EmissionColor", colors.Create(0.1, 0.1, 0.1, 0.05))
             end
         end
     end
@@ -1202,15 +1219,17 @@ function Releasemon(mon)
 
                 if count > 0 then
                     local damage = totaldmg
-                    if math.random() >= ActiveMonStats.evasionChance then
-                        summonBase.DoHit(
-                            player.networkObject,
-                            damage,
-                            damageType.PLAYER_SECONDARY_NO_KNOCKBACK,
-                            summonBase.transform.position,
-                            false
-                        )
+                    if helperMethods.IsValidWithLuck(ActiveMonStats.evasionChance, ActiveMonStats.evasionChance, ActiveMonStats.evasionChance) then --evasion 
+                        damage = 0
+                        audio.PlaySoundLocal(sounds.PLAYER_EVADE, player.transform.position)
                     end
+                    summonBase.DoHit(
+                        player.networkObject,
+                        damage,
+                        damageType.PLAYER_SECONDARY_NO_KNOCKBACK,
+                        summonBase.transform.position,
+                        false
+                    )
                 end
             end
 

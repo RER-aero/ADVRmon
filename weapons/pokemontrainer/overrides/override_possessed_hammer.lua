@@ -19,5 +19,5 @@ function ADVR.onPickupProxies(originalPlayerRef)
 end
 
 function ADVR.RelicEvents.onShapeLoaded(shape, playerInv)
-	playerInv.currentSecondaryWeapon.UpdateWeaponMesh(shape)
+	playerInv.currentPrimaryWeapon.UpdateWeaponMesh(shape)
 end

@@ -42,7 +42,7 @@ function ChangeNames()
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_id_exploding_maggot_bestiary_name", "Exploding Goo <color=#880696>(Poison)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("abberant_id_bat_bestiary_name", "Infested Bounce Bat <color=#ff99ff>(Aberrant)</color> <color=#cce2ea>(Flying)</color> <color=#877e68>(Stone)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_id_bat_bestiary_name", "Infested Bat <color=#cce2ea>(Flying)</color>")
-    game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("abberrant_id_slime_big_bestiary_name", "Infested Great Slime <color=#ff99ff>(Aberrant)</color> <color=#26ce21>(Slime)</color> <color=#9ae560>(Plant)</color>")
+    game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("abberrant_id_slime_big_bestiary_name", "Infested Great Slime <color=#ff99ff>(Aberrant)</color> <color=#26ce21>(Slime)</color> <color=#150515>(Dark)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("abberrant_id_bat_bestiary_name", "Infested Bounce Bat <color=#ff99ff>(Aberrant)</color> <color=#cce2ea>(Flying)</color> <color=#880696>(Poison)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("abberrant_id_exploding_maggot_bestiary_name", "<color=#ff99ff>(Aberrant)</color> Infested Bomb Grub <color=#f95909>(Fire)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_id_goo_exploding_bestiary_name", "Exploding Goo <color=#880696>(Poison)</color> <color=#f95909>(Fire)</color>")
@@ -87,6 +87,8 @@ function ChangeNames()
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_ns_slime_tiny_bestiary_name", "Noxious Smol Slime <color=#26ce21>(Slime)</color> <color=#880696>(Poison)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_ns_poison_spitter_bestiary_name", "Noxious Spout <color=#880696>(Poison)</color> <color=#9ae560>(Plant)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_ns_wight_drowned_bestiary_name", "Noxious Drowned Zombie <color=#59310b>(Undead)</color> <color=#880696>(Poison)</color>")
+        game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_poi_poison_sentry_bestiary_name", "Noxious Sprig <color=#880696>(Poison)</color> <color=#9ae560>(Plant)</color>")
+
     -- LD
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_ld_plant_crystal_bestiary_name", "Luminous Bloom <color=#36f9ec>(Crystal)</color> <color=#9ae560>(Plant)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_ld_sentryplant_bestiary_name", "Luminous Blossom <color=#9ae560>(Plant)</color> <color=#36f9ec>(Crystal)</color>")
@@ -112,7 +114,7 @@ function ChangeNames()
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("achievement_the_bestiary_name", "The Pokedex")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("achievement_the_bestiary_desc", "Help the Acolyte fill in the Pokedex and discover 35 unique creatures.")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("boss_Rabid Bestiary", "Rabid Pokedex")
-     if math.random() == .01 then
+     if math.random() <= .05 or game.progressHandler.GetProgressById("shiny_charm") then
         game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("poi_clarence_bestiary_name", "Clarence <color=#26ce21>(Slime)</color> <color=#e058e8>(Cutie patootie)</color> ")
     end
 end

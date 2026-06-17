@@ -13,10 +13,12 @@ function ADVR.onLoad()
     combo.DefineAugmentSlot(1, false, 0)
     combo.DefineAugmentSlot(2, true, 0)
     combo.DefineAugmentSlot(3, true, 0)
-     game.localizationInterpreter.currentlySelectedLanguage.AddTranslation("pokemontrainer_combo_name", "Pokemon Trainer")
-    game.localizationInterpreter.currentlySelectedLanguage.AddTranslation("pokemontrainer_primary_crit_stat_name", "Mon Crit")
-    game.localizationInterpreter.currentlySelectedLanguage.AddTranslation("pokemontrainer_primary_damage_stat_name", "Mon Damage")
-    game.localizationInterpreter.currentlySelectedLanguage.AddTranslation("pokemontrainer_primary_name", "Active Pokemon")
+    game.localizationInterpreter.currentlySelectedLanguage.AddTranslation("pokemontrainer_combo_name", "Pokemon Trainer")
+    game.localizationInterpreter.currentlySelectedLanguage.AddTranslation("pokemontrainer_primary_crit_stat_name", "Melee Crit")
+    game.localizationInterpreter.currentlySelectedLanguage.AddTranslation("pokemontrainer_primary_damage_stat_name", "Melee Damage")
+    game.localizationInterpreter.currentlySelectedLanguage.AddTranslation("pokemontrainer_secondary_crit_stat_name", "Ranged Crit")
+    game.localizationInterpreter.currentlySelectedLanguage.AddTranslation("pokemontrainer_secondary_damage_stat_name", "Ranged Damage")
+
 end
 
 function ADVR.WeaponComboEvents.onWeaponComboSelected()
@@ -27,9 +29,7 @@ function ADVR.WeaponComboEvents.onWeaponComboSelected()
     player.PrimaryCritChance.ChangeAddend("defaultValue", 0)
 end
 
-function ADVR.onDungeonGenerated(dungeon)
-	game.inventory.currentSecondaryWeapon.AsSwordBase().bladeCreator.transform.localScale = vector3.__new(1, 1.5, 1)
-end
+
 
 function ADVR.WeaponComboEvents.onTriggerPressed(weaponBase, hand, isEmpty)
     if not isEmpty or weaponBase == game.inventory.currentPrimaryWeapon then
