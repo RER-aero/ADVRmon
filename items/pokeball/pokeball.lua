@@ -125,6 +125,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     PCcoral = { name = "abberrant_pc_wisp_fly", spawnAs = "enemy_fg_wisp", primaryType = "magic", secondaryType = "flying", damage = 5, critchance = .2, attacktype = "melee", isFlying = true },
     PCprofanewiusp = { name = "abberrant_pc_wisp_big", spawnAs = "enemy_fg_wisp", primaryType = "magic", secondaryType = "dark", damage = 7, critchance = .2, attacktype = "melee", isFlying = true },
     PCdevilpris = { name = "abberrant_pc_rotating_beam", spawnAs = "enemy_fg_targeting_beam", primaryType = "magic", secondaryType = "dark", damage = 6, critchance = .1, attacktype = "ranged", isFlying = false },
+    PCstupidfuckingtome = { name = "abberrant_pc_curing_tome", spawnAs = "enemy_invincibility_tome", primaryType = "magic", secondaryType = "crystal", damage = 0, critchance = 0, attacktype = "melee", isFlying = false },
 
 
 }
@@ -159,6 +160,7 @@ function ADVR.onLoad()
     HasPremierBallAugment = false
     HasHealBallAugment = false
     HasDreamBallAugment = false
+    HasParkBallAugment = false
 
     HasCritcalChanceAugment = false -- Z crystal
     HasMaxBandAugment = false
@@ -474,6 +476,10 @@ function ADVR.onPickup()
     augment = game.progressHandler.GetProgressById("dream_ball")
 
     HasDreamBallAugment = augment ~= nil and augment.eventsRegistered
+
+    augment = game.progressHandler.GetProgressById("park_ball")
+
+    HasParkBallAugment = augment ~= nil and augment.eventsRegistered
 
 
     if HasUltraBallAugment then
@@ -811,6 +817,10 @@ function Throwball()
         if HasQuickBallAugment and IsFirstCatch then
             chancetocatch = 1
             IsFirstCatch = false
+        end
+        local room = game.currentWorldGenerator.GetRoomAtRealPos(player.transform.position)
+        if HasParkBallAugment and room.type == roomTypes.SEALED then
+            chancetocatch = chancetocatch + .05
         end
 
         if helperMethods.IsValidWithLuck(0, 1, chancetocatch) then
