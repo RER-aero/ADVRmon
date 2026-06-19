@@ -1,5 +1,5 @@
 function ADVR.onLoad()
-    pickup.name = "Pinap Berry"
+    pickup.name = "Silver Pinap Berry"
     pickup.desc = "Catching a Pokémon will make it drop keys."
 	pickup.weight = 85
 	pickup.tier = 1
