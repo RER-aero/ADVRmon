@@ -54,7 +54,6 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     NSsmolslime = { name = "enemy_ns_slime_tiny", primaryType = "slime", secondaryType = "poison", damage = 4, critchance = .25, attacktype = "melee", isFlying = false },
     NSspout = { name = "enemy_ns_poison_spitter", primaryType = "poison", secondaryType = "plant", damage = 5, critchance = .15, attacktype = "ranged", isFlying = false },
     NSwight = { name = "enemy_ns_wight_drowned", primaryType = "undead", secondaryType = "poison", damage = 5, critchance = .15, attacktype = "melee", isFlying = false },
-    NSgrub = { name = "enemy_ns_maggot", primaryType = "poison", secondaryType = "", damage = 4, critchance = .15, attacktype = "melee", isFlying = false },
     queenfly = { name = "boss_fly_hive", primaryType = "flying", secondaryType = "poison", damage = 6, critchance = .35, attacktype = "melee", isFlying = true },
     NSsprig = { name = "enemy_poi_poison_sentry", primaryType = "poison", secondaryType = "plant", damage = 5, critchance = .15, attacktype = "ranged", isFlying = false },
 
@@ -166,8 +165,8 @@ function ADVR.onLoad()
     HasTeraOrbAugment = false
     HasShinyCharmAugment = false
     -- end augments --
-    ShinyEnemies = {}
-    BaseShinyChance = .01
+
+    BaseShinyChance = 1 / 512
 
     BallDistMult = 2 -- how far the orb goes when releasing a mon
     MaxSummons = 1   -- do not change this or terrible things will happen
@@ -180,7 +179,7 @@ function ADVR.onLoad()
         isFlying = false,
         criticalChance = .1,
         attacktype = "",
-        attackSpd = 1,
+        attackSpd = .9,
         evasionChance = .05,
         isShiny = false,
         currentHP = 1,
@@ -195,25 +194,21 @@ function ADVR.onLoad()
             table.insert(enemies, registry.possibilities[j].objToSpawn)
         end
     end
-    pickup.AddPostObjectSpawnListenersRuntimeByObjects(enemies) --Keep track of all enemies
+    pickup.AddPostObjectSpawnListenersRuntimeByObjects(enemies) --Thanks Aregularbear
 end
 
-function ADVR.onPostObjectSpawn(object) --Shiny enemies
-    if object == nil then
-        return
-    end
-
+function ADVR.onPostObjectSpawn(prefab, object)
+    if object == nil then return end
+    local enemyBase = object.GetComponent_EnemyBase_()
+    if enemyBase == nil then return end
 
     if object == ActiveMonObj and ActiveMonStats.isShiny then
         CreateShiny(object)
-        return object
+        return
     end
 
-    local chance = BaseShinyChance
-    if helperMethods.IsValidWithLuck(chance, chance, chance) then
+    if math.random() <= BaseShinyChance then
         CreateShiny(object)
-        --keep track of shiny modified enemies
-        return object
     end
 end
 
@@ -221,7 +216,7 @@ RelicsTaken = {}
 function ADVR.onPickupTaken(relic)
     local item = relic.rolledItem.id
     if TESTING then
-    game.ShowMessageInWorld(item, 1)
+        game.ShowMessageInWorld(item, 1)
     end
     if item == "x_attack" then
         if ActiveMonObj ~= nil then
@@ -291,7 +286,7 @@ function ADVR.onPickupTaken(relic)
         table.insert(RelicsTaken, item)
     end
     if item == "carbos" then
-        ActiveMonStats.attackSpd = .85
+        ActiveMonStats.attackSpd = ActiveMonStats.attackSpd - .15
         table.insert(RelicsTaken, item)
     end
     if item == "miracle_seed" then
@@ -326,9 +321,43 @@ function ADVR.onPickupTaken(relic)
     end
     if item == "max_potion" then
         if ActiveMonBase.Health < ActiveMonBase.MaxHealth then
-            ActiveMonStats.currentHP = ActiveMonStats.MaxHealth
+            ActiveMonStats.currentHP = ActiveMonBase.MaxHealth
         end
         table.insert(RelicsTaken, item)
+    end
+    if item == "repel" then
+        REPEL(2)
+        table.insert(RelicsTaken, item)
+    end
+    if item == "super_repel" then
+        REPEL(4)
+        table.insert(RelicsTaken, item)
+    end
+    if item == "max_repel" then
+        REPEL(7)
+        table.insert(RelicsTaken, item)
+    end
+    if item == "hard_stone" then
+        SetStatByType("stone", "damage", function(val) return val + 1 end)
+        table.insert(RelicsTaken, item)
+    end
+    if item == "dark_glasses" then
+        SetStatByType("dark", "damage", function(val) return val + 1 end)
+        table.insert(RelicsTaken, item)
+    end
+end
+
+function REPEL(num)
+    local W = game.GetEnemiesInRadius(30, player.transform.position, false, false)
+    local deleted = 0
+    local attempts = 0
+    while deleted < num and attempts < 100 do
+        attempts = attempts + 1
+        local victim = W[math.random(1, #W)].gameObject
+        if victim ~= ActiveMonObj then
+            game.Delete(victim, false)
+            deleted = deleted + 1
+        end
     end
 end
 
@@ -354,7 +383,7 @@ end
 
 function ADVR.onPickup()
     pickup.RegisterUsable()
-    game.inventory.currentSecondaryWeapon.AsSwordBase().bladeCreator.transform.localScale = vector3.__new(1, 1.35, 1)
+    game.inventory.currentPrimaryWeapon.AsSwordBase().bladeCreator.transform.localScale = vector3.__new(1, 1.35, 1)
 
     game.itemInterpreter.currentUsable.currentCharge = game.itemInterpreter.currentUsable.amountUses
     game.activePickupSlot.UpdateChargeDisplay()
@@ -451,13 +480,13 @@ function ADVR.onPickup()
         BaseChanceForCatch = BaseChanceForCatch + .1
     end
     if HasShinyCharmAugment then
-        BaseShinyChance = .05
+        BaseShinyChance = BaseShinyChance * 2
     end
 end
 
 function ADVR.onPickupActivate()
     if TESTING then
-    game.ShowMessageInWorld(tostring(BaseShinyChance), .1)
+        game.ShowMessageInWorld(tostring(BaseShinyChance), .1)
     end
 end
 
@@ -468,40 +497,27 @@ function ADVR.onAfterBossAreaGenerated()
 end
 
 function CreateShiny(obj)
-    table.insert(ShinyEnemies, obj)
+    local enemyBase = obj.GetComponent_EnemyBase_()
+    if enemyBase == nil then return end
     local renderers = obj.GetComponentsInChildren(game.GetType("MeshRenderer"))
     if renderers ~= nil then
         for r = 0, renderers.Length - 1 do
             renderers[r].material.EnableKeyword("_EMISSION")
             renderers[r].material.color = colors.Create(.565, .69, 1, .651)
-            -- renderers[r].material.SetColor("_EmissionColor", colors.Create(0.1, 0.1, 0.1, 0.05))
         end
     end
 end
 
+--I should call this mod "nil checks galore"
 function ADVR.onGlobalTick()
     if MonIsActive and FunctionOnRepeat == nil then
         FunctionOnRepeat = pickup.CallFunctionOnRepeat("UpdateMon", 999999, 0.1)
     end
-    if #ShinyEnemies > 0 then
-        for _, v in ipairs(ShinyEnemies) do
-            local renderers = v.GetComponentsInChildren(game.GetType("MeshRenderer"))
-            for r = 0, renderers.Length - 1 do
-                renderers[r].material.EnableKeyword("_EMISSION")
-                renderers[r].material.color = colors.Create(.565, .69, 1, .651)
-                --    renderers[r].material.SetColor("_EmissionColor", colors.Create(0.1, 0.1, 0.1, 0.05))
-            end
-        end
-    end
 end
 
 function ADVR.onEntityDeath(livingBase)
-    if table.contains(ShinyEnemies, livingBase.gameObject) then
-        local pos = table.find(ShinyEnemies, livingBase.gameObject)
-        if livingBase == ActiveMonBase then
-            ActiveMonStats.isShiny = false
-        end
-        table.remove(ShinyEnemies, pos)
+    if livingBase == ActiveMonBase then
+        ActiveMonStats.isShiny = false
     end
 end
 
@@ -516,7 +532,7 @@ function PutMonBackInBall() --When returning a pokemon back to the ball (mark) -
     local friend = ActiveMonObj
     local friendBase = friend.GetComponent_EnemyBase_()
 
-   
+
     audio.PlaySoundLocal(sounds.ENEMY_ID_SLIME_BULLET_SHOOT, game.playerController.rightHand.transform.position)
 
     local startPos = game.playerController.rightHand.transform.position
@@ -563,10 +579,9 @@ function RecallBullet(projectile, duration, startPos, friendObj)
             if HasHealBallAugment then
                 ActiveMonStats.currentHP = friendBase.MaxHealth
             end
-             game.itemInterpreter.currentUsable.currentCharge = game.itemInterpreter.currentUsable.amountUses
+            game.itemInterpreter.currentUsable.currentCharge = game.itemInterpreter.currentUsable.amountUses
             game.activePickupSlot.UpdateChargeDisplay()
             game.Delete(friendObj)
-           
         end
     end
 
@@ -586,13 +601,13 @@ function MoveBullet(projectile, duration, startPos, endEnemy)
     local elapsed = 0
     local enemyBase = endEnemy.GetComponent_EnemyBase_()
     local endPos = enemyBase.GetCenterInWorld()
-
+    local enemyBase = endEnemy.GetComponent_EnemyBase_()
     while elapsed < duration / 3 do
         if projectile == nil then
             return
         end
 
-        -- bail if enemy died before orb arrived
+
         if endEnemy == nil or enemyBase == nil or enemyBase.isDead then
             game.Delete(projectile)
             return
@@ -611,17 +626,19 @@ function MoveBullet(projectile, duration, startPos, endEnemy)
         ActiveMon = livingId
         if HasMegaEvolveAugment and HasAbrntVersion(ActiveMon) then
             if helperMethods.IsValidWithLuck(.05, 1, .35) then
-                local newmon = HasAbrntVersion(ActiveMon)
-                ActiveMon = newmon
+                ActiveMon = HasAbrntVersion(ActiveMon)
             end
         end
 
         ActiveMonStats.isShiny = false
-
-        if table.contains(ShinyEnemies, endEnemy.gameObject) then
-            ActiveMonStats.isShiny = true
-            table.remove(ShinyEnemies, table.find(ShinyEnemies, endEnemy.gameObject))
+        local renderers = endEnemy.gameObject.GetComponentsInChildren(game.GetType("MeshRenderer"))
+        if renderers ~= nil and renderers.Length > 0 then
+            local color = renderers[0].material.color
+            if math.abs(color.r - 0.565) < 0.01 and math.abs(color.g - 0.69) < 0.01 then
+                ActiveMonStats.isShiny = true
+            end
         end
+
         ActiveMonGetStats(ActiveMon, enemyBase.MaxHealth)
         local abr = string.match(tostring(ActiveMon), "abberrant")
         onMonCaught(ActiveMon, ActiveMonStats.isShiny, abr, endPos)
@@ -632,9 +649,13 @@ function MoveBullet(projectile, duration, startPos, endEnemy)
     end
 end
 
+---@diagnostic disable-next-line: lowercase-global
 function onMonCaught(name, shiny, abrnt, pos)
+    local saved = game.LoadInt("pokemoncaught", 1)
+    saved = saved + 1
+    game.SaveInt("pokemoncaught", saved)
     if table.contains(RelicsTaken, "pinap_berry") then
-        for i = 3, math.random(5) do
+        for i = 1, math.random(3, 5) do
             game.SpawnObjectNetwork(objects.ITEM_COIN, pos)
         end
     end
@@ -642,6 +663,11 @@ function onMonCaught(name, shiny, abrnt, pos)
         for i = 1, math.random(3) do
             game.SpawnObjectNetwork(objects.ITEM_KEY, pos)
         end
+    end
+    if shiny then
+        game.ShowMessageInWorld("<color=#c8960c>Sh</color><color=#e8b84b>in</color><color=#f5d78e>y</color>", .5)
+
+        game.SaveBool("CaughtShiny", true)
     end
 end
 
@@ -862,8 +888,8 @@ function MoveBall(projectile, duration, startPos, endpos)
     end
     local pos = projectile.transform.position
     if projectile ~= nil then
-        Releasemon(ActiveMon)
         game.Delete(projectile)
+        Releasemon(ActiveMon)
     end
 end
 
@@ -1094,7 +1120,7 @@ function Releasemon(mon)
                 end
             end
             local mult = 1.5
-            if math.random() == .67 then --hehe
+            if math.random(10000) == 1 then
                 mult = 5
             end
             ActiveMonObj.GetComponent_Transform_().localScale = ActiveMonObj.GetComponent_Transform_().localScale * mult
@@ -1104,6 +1130,13 @@ function Releasemon(mon)
             base.Health = base.MaxHealth
         end
         ActiveMonBase = base
+        --game.killAfterFloorComplete[game.currentFloor].Remove(ActiveMonBase.gameObject)
+
+        -- game.globalEnemyList.Remove(ActiveMonBase.gameObject.GetComponent_EnemyBase_())
+        -- game.globalLivingList.Remove(ActiveMonBase.gameObject.GetComponent_LivingBase_())
+        -- game.globalEnemyList.Remove(ActiveMonBase.gameObject.GetComponent(game.GetType("EnemyBase")))
+        -- game.globalLivingList.Remove(ActiveMonBase.gameObject.GetComponent(game.GetType("LivingBase")))
+
         local ai = obj.GetComponent_AI_()
         if ActiveMonStats.currentHP < ActiveMonBase.Health then
             ActiveMonBase.Health = ActiveMonStats.currentHP
@@ -1211,14 +1244,14 @@ function Releasemon(mon)
                     if HasTeraOrbAugment and mod > 1 then
                         mod = 1
                     end
-                    totaldmg = dmg * mod
+                    totaldmg = totaldmg + (dmg * mod)
                 end
 
                 local count = #closeEnemies
 
                 if count > 0 then
                     local damage = totaldmg
-                    if helperMethods.IsValidWithLuck(ActiveMonStats.evasionChance, ActiveMonStats.evasionChance, ActiveMonStats.evasionChance) then --evasion 
+                    if helperMethods.IsValidWithLuck(ActiveMonStats.evasionChance, ActiveMonStats.evasionChance, ActiveMonStats.evasionChance) then --evasion
                         damage = 0
                         audio.PlaySoundLocal(sounds.PLAYER_EVADE, player.transform.position)
                     end
