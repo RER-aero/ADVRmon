@@ -125,7 +125,7 @@ end
 -- undead: #59310b
 -- poison: #880696
 -- plant: #9ae560
--- magic: #5450af
+-- magic: #5450af and maybe #7277F1
 -- stone: #877e68
 -- crystal: #36f9ec
 -- dark: #15051
