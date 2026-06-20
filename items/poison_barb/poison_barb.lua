@@ -1,6 +1,6 @@
 function ADVR.onLoad()
     pickup.name = "Poison Barb"
-    pickup.desc = "An item to be held by a Pokémon. This small poisonous barb boosts the power of the holder's Poison-type attacks."
+    pickup.desc = "An item to be held by a Pokémon. This small poisonous barb boosts the power of the holder's <color=#880696>Poison</color>-type attacks."
 	pickup.weight = 85
 	pickup.tier = 1
 	pickup.maxAmount = 10

@@ -1,6 +1,6 @@
 function ADVR.onLoad()
     progress.name = "Heavy Ball"
-    progress.desc = "Increases catch chance for <color=#877e68>stone</color> type enemies"
+    progress.desc = "Increases catch chance for <color=#877e68>(Stone)</color> type enemies"
 	progress.price = 1
 	progress.currency = "beastblood"
     
