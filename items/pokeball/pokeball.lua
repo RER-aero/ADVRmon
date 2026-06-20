@@ -358,6 +358,10 @@ function ADVR.onPickupTaken(relic)
         SetStatByType("slime", "damage", function(val) return val + 1 end)
         table.insert(RelicsTaken, item)
     end
+    if item == "cursed_skull" then
+        SetStatByType("undead", "damage", function(val) return val + 1 end)
+        table.insert(RelicsTaken, item)
+    end
     if item == "sharp_beak" then
         SetStatByType("flying", "damage", function(val) return val + 1 end)
         table.insert(RelicsTaken, item)
