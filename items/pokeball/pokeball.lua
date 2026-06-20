@@ -4,8 +4,8 @@
 
 -- If you are here because you are curious on how it works, let me know when you figure it out because im curious too
 
-TESTING = false
-SHINYTESTING = false
+TESTING = false --enables stuff like showing which relic youve picked up
+SHINYTESTING = false -- sets hiny chance to 100%
 local ActiveSummons = {}
 local FunctionOnRepeat = nil
 StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, stone, crystal, dark, flying, fire, steel
