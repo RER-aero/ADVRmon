@@ -294,6 +294,14 @@ function ADVR.onPickupTaken(relic)
         ActiveMonStats.attackSpd = ActiveMonStats.attackSpd - .15
         table.insert(RelicsTaken, item)
     end
+    if item == "iron" then
+        ActiveMonStats.evasionChance = ActiveMonStats.evasionChance + .05
+        table.insert(RelicsTaken, item)
+    end
+    if item == "zinc" then
+        ActiveMonStats.evasionChance = ActiveMonStats.evasionChance + .05
+        table.insert(RelicsTaken, item)
+    end
     if item == "miracle_seed" then
         SetStatByType("plant", "damage", function(val) return val + 1 end)
         table.insert(RelicsTaken, item)
