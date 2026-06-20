@@ -1,7 +1,7 @@
 function ADVR.onLoad()
 	achievement.psvrID = 999
     achievement.name = "That one sparkles!"
-	achievement.desc = "Find and catch a shiny enemy <color=#c90808>(ADV</color><color=#1c1b1a>R</color><color=#cecece>MON)</color>"
+	achievement.desc = "Find and catch a <color=#c8960c>Sh</color><color=#e8b84b>in</color><color=#f5d78e>y</color> enemy <color=#c90808>(ADV</color><color=#1c1b1a>R</color><color=#cecece>MON)</color>"
 	achievement.hideDescription = false
 	achievement.unlocksItem = "metal_coat"
 	achievement.predecessors = {achievements.GOOD_LUCK}

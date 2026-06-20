@@ -4,7 +4,7 @@ function ADVR.onLoad()
 	achievement.desc = "Win a run with the trainers armament in hard mode (2.0x) <color=#c90808>(ADV</color><color=#1c1b1a>R</color><color=#cecece>MON)</color>"
 	achievement.predecessors = {achievements.GOOD_LUCK}
 	achievement.category = "combat"
-	achievement.unlocksItem = "super_repel"
+	achievement.unlocksItem = "scope_lens"
 end
 
 function ADVR.onRunComplete()

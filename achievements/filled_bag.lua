@@ -6,6 +6,7 @@ function ADVR.onLoad()
     achievement.predecessors = {achievements.GOOD_LUCK}
     achievement.unlocksItem = "silver_pinap_berry"
     achievement.category = "combat"
+    achievement.showProgressBar = true
     NpcIdKey = "blacksmith_pokemontrainer_primary"
 end
 
@@ -39,4 +40,15 @@ function HasBoughtAtLeast10Upgrades()
     end
 
     return boughtCount >= 10
+end
+
+function GetProgressInfo()
+    local boughtCount
+   for progressRepresentation in game.progressHandler.GetProgressesByNpc(NpcIdKey) do
+        if progressRepresentation.IsBought() then
+            boughtCount = boughtCount + 1
+        end
+    end
+
+    return boughtCount, 10
 end
