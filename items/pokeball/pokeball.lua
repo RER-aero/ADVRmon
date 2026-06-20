@@ -94,18 +94,18 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     --shifting depths
     -- SG
     SGrubyslime = { name = "enemy_ruby_slime", spawnAs = "enemy_golden_slime", primaryType = "slime", secondaryType = "crystal", damage = 5, critchance = .12, attacktype = "melee", isFlying = false },
-    SGtangerine = { name = "enemy_sg_plant_4x_switch", primaryType = "plant", secondaryType = "", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
-    SGgoldenrod = { name = "enemy_sg_plant_8x", primaryType = "plant", secondaryType = "", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
-    SGskybloom = { name = "enemy_sg_plant_4x_random_delay", primaryType = "plant", secondaryType = "", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
+    SGtangerine = { name = "enemy_sg_plant_4x_switch", spawnAs = "enemy_og_plant_4x", primaryType = "plant", secondaryType = "", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
+    SGgoldenrod = { name = "enemy_sg_plant_8x", spawnAs = "enemy_og_plant_4x", primaryType = "plant", secondaryType = "", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
+    SGskybloom = { name = "enemy_sg_plant_4x_random_delay", spawnAs = "enemy_og_plant_4x", primaryType = "plant", secondaryType = "", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
     SGsporeslime = { name = "enemy_sg_slime_red", spawnAs = "enemy_og_slime", primaryType = "slime", secondaryType = "plant", damage = 3, critchance = .1, attacktype = "ranged", isFlying = false },
     SGmuscleslime = { name = "enemy_sg_slime_yellow", spawnAs = "enemy_og_slime", primaryType = "slime", secondaryType = "plant", damage = 3, critchance = .1, attacktype = "ranged", isFlying = false },
     SGsprightslime = { name = "enemy_sg_slime_blue", spawnAs = "enemy_og_slime", primaryType = "slime", secondaryType = "plant", damage = 3, critchance = .1, attacktype = "ranged", isFlying = false },
     SGeruption = { name = "abberrant_sg_slime_orange", spawnAs = "enemy_og_slime", primaryType = "slime", secondaryType = "fire", damage = 4, critchance = .1, attacktype = "ranged", isFlying = false },
     SGhardy = { name = "abberrant_sg_slime_green", spawnAs = "enemy_og_slime", primaryType = "slime", secondaryType = "plant", damage = 4, critchance = .1, attacktype = "ranged", isFlying = false },
     SGdoom = { name = "abberrant_sg_slime_purple", spawnAs = "enemy_og_slime", primaryType = "slime", secondaryType = "dark", damage = 4, critchance = .1, attacktype = "ranged", isFlying = false },
-    SGfuchsia = { name = "enemy_sg_plant_homing_8x", primaryType = "plant", secondaryType = "dark", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
+    SGfuchsia = { name = "enemy_sg_plant_homing_8x", spawnAs = "abberrant_og_plant_4x", primaryType = "plant", secondaryType = "dark", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
     SGsponge = { name = "enemy_sg_sponge_spitter", spawnAs = "enemy_ns_poison_spitter", primaryType = "plant", secondaryType = "poison", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
-    SGsapphire = { name = "enemy_sg_plant_homing_faster", primaryType = "plant", secondaryType = "crystal", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
+    SGsapphire = { name = "enemy_sg_plant_homing_faster", spawnAs = "enemy_og_plant_homing", primaryType = "plant", secondaryType = "crystal", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
     vrdrovrdurgr = { name = "boss_verdure_overgrowth", primaryType = "plant", secondaryType = "dark", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
     SGgraggot = { name = "enemy_sg_graggot", spawnAs = "enemy_id_maggot", primaryType = "bug", secondaryType = "plant", damage = 5, critchance = .12, attacktype = "melee", isFlying = false },
     SGblaggot = { name = "abberrant_sg_graggot", spawnAs = "enemy_id_maggot", primaryType = "plant", secondaryType = "bug", damage = 5, critchance = .12, attacktype = "melee", isFlying = false },
@@ -348,6 +348,14 @@ function ADVR.onPickupTaken(relic)
     end
     if item == "dark_glasses" then
         SetStatByType("dark", "damage", function(val) return val + 1 end)
+        table.insert(RelicsTaken, item)
+    end
+      if item == "old_spellbook" then
+        SetStatByType("magic", "damage", function(val) return val + 1 end)
+        table.insert(RelicsTaken, item)
+    end
+     if item == "blue_quartz" then
+        SetStatByType("crystal", "damage", function(val) return val + 1 end)
         table.insert(RelicsTaken, item)
     end
     if item == "charcoal" then
@@ -806,6 +814,7 @@ function CannotCatchEnemy(enemy)
         "boss_doomshroom",
         "enemy_challenge_ghost",
         "boss_fly_hive",
+        "boss_verdure_overgrowth"
     }
 
     for i = 1, #Unable do
