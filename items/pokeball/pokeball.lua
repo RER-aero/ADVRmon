@@ -5,6 +5,7 @@
 -- If you are here because you are curious on how it works, let me know when you figure it out because im curious too
 
 TESTING = false
+SHINYTESTING = false
 local ActiveSummons = {}
 local FunctionOnRepeat = nil
 StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, stone, crystal, dark, flying, fire, steel
@@ -37,7 +38,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     IDgobslime = { name = "enemy_id_slime_bullet", primaryType = "slime", secondaryType = "plant", damage = 3, critchance = .15, attacktype = "ranged", isFlying = false },
     IDgoosack = { name = "enemy_id_goo_exploding", primaryType = "poison", secondaryType = "fire", damage = 3, critchance = .15, attacktype = "melee", isFlying = false },
     IDslime = { name = "enemy_id_slime", primaryType = "slime", secondaryType = "poison", damage = 4, critchance = .11, attacktype = "melee", isFlying = false },
-    IDgrub = { name = "enemy_id_maggot", primaryType = "poison", secondaryType = "", damage = 2, critchance = .21, attacktype = "melee", isFlying = false },
+    IDgrub = { name = "enemy_id_maggot", primaryType = "bug", secondaryType = "", damage = 2, critchance = .21, attacktype = "melee", isFlying = false },
     IDshroom = { name = "enemy_id_mushroom_rotten", primaryType = "plant", secondaryType = "poison", damage = 5, critchance = .1, attacktype = "ranged", isFlying = false },
     IDwight = { name = "enemy_id_wight", primaryType = "undead", secondaryType = "plant", damage = 4, critchance = .1, attacktype = "melee", isFlying = false },
     IDaxe = { name = "enemy_id_possessed_axe", primaryType = "steel", secondaryType = "flying", damage = 4, critchance = .67, attacktype = "melee", isFlying = false },
@@ -46,15 +47,15 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     IDbat = { name = "enemy_id_bat", primaryType = "flying", secondaryType = "", damage = 1, critchance = .2234, attacktype = "melee", isFlying = true },
     IDgreatslime = { name = "abberrant_id_slime_big", primaryType = "slime", secondaryType = "dark", damage = 3, critchance = .15, attacktype = "melee", isFlying = false },
 
-    NSfly = { name = "enemy_ns_fly", primaryType = "flying", secondaryType = "", damage = 3, critchance = .15, attacktype = "melee", isFlying = true },
-    NSflyhive = { name = "enemy_ns_fly_hive", primaryType = "dark", secondaryType = "flying", damage = 3, critchance = .15, attacktype = "ranged", isFlying = false },
-    NSmaggot = { name = "enemy_ns_maggot", primaryType = "poison", secondaryType = "", damage = 4, critchance = .125, attacktype = "melee", isFlying = false },
+    NSfly = { name = "enemy_ns_fly", primaryType = "bug", secondaryType = "flying", damage = 3, critchance = .15, attacktype = "melee", isFlying = true },
+    NSflyhive = { name = "enemy_ns_fly_hive", primaryType = "bug", secondaryType = "", damage = 3, critchance = .15, attacktype = "ranged", isFlying = false },
+    NSmaggot = { name = "enemy_ns_maggot", primaryType = "bug", secondaryType = "poison", damage = 4, critchance = .125, attacktype = "melee", isFlying = false },
     NSslime = { name = "enemy_ns_slime", primaryType = "slime", secondaryType = "poison", damage = 5, critchance = .18, attacktype = "melee", isFlying = false },
     NSrottenslime = { name = "enemy_ns_slime_rotten", primaryType = "poison", secondaryType = "slime", damage = 8, critchance = .09, attacktype = "melee", isFlying = false },
     NSsmolslime = { name = "enemy_ns_slime_tiny", primaryType = "slime", secondaryType = "poison", damage = 4, critchance = .25, attacktype = "melee", isFlying = false },
     NSspout = { name = "enemy_ns_poison_spitter", primaryType = "poison", secondaryType = "plant", damage = 5, critchance = .15, attacktype = "ranged", isFlying = false },
     NSwight = { name = "enemy_ns_wight_drowned", primaryType = "undead", secondaryType = "poison", damage = 5, critchance = .15, attacktype = "melee", isFlying = false },
-    queenfly = { name = "boss_fly_hive", primaryType = "flying", secondaryType = "poison", damage = 6, critchance = .35, attacktype = "melee", isFlying = true },
+    queenfly = { name = "boss_fly_hive", primaryType = "bug", secondaryType = "poison", damage = 6, critchance = .35, attacktype = "melee", isFlying = true },
     NSsprig = { name = "enemy_poi_poison_sentry", primaryType = "poison", secondaryType = "plant", damage = 5, critchance = .15, attacktype = "ranged", isFlying = false },
 
     FGtomeofmagic = { name = "enemy_fg_book", primaryType = "magic", secondaryType = "", damage = 3, critchance = .15, attacktype = "ranged", isFlying = false },
@@ -93,26 +94,22 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     --shifting depths
     -- SG
     SGrubyslime = { name = "enemy_ruby_slime", spawnAs = "enemy_golden_slime", primaryType = "slime", secondaryType = "crystal", damage = 5, critchance = .12, attacktype = "melee", isFlying = false },
-
     SGtangerine = { name = "enemy_sg_plant_4x_switch", primaryType = "plant", secondaryType = "", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
     SGgoldenrod = { name = "enemy_sg_plant_8x", primaryType = "plant", secondaryType = "", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
     SGskybloom = { name = "enemy_sg_plant_4x_random_delay", primaryType = "plant", secondaryType = "", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
-
     SGsporeslime = { name = "enemy_sg_slime_red", spawnAs = "enemy_og_slime", primaryType = "slime", secondaryType = "plant", damage = 3, critchance = .1, attacktype = "ranged", isFlying = false },
     SGmuscleslime = { name = "enemy_sg_slime_yellow", spawnAs = "enemy_og_slime", primaryType = "slime", secondaryType = "plant", damage = 3, critchance = .1, attacktype = "ranged", isFlying = false },
     SGsprightslime = { name = "enemy_sg_slime_blue", spawnAs = "enemy_og_slime", primaryType = "slime", secondaryType = "plant", damage = 3, critchance = .1, attacktype = "ranged", isFlying = false },
-
     SGeruption = { name = "abberrant_sg_slime_orange", spawnAs = "enemy_og_slime", primaryType = "slime", secondaryType = "fire", damage = 4, critchance = .1, attacktype = "ranged", isFlying = false },
     SGhardy = { name = "abberrant_sg_slime_green", spawnAs = "enemy_og_slime", primaryType = "slime", secondaryType = "plant", damage = 4, critchance = .1, attacktype = "ranged", isFlying = false },
     SGdoom = { name = "abberrant_sg_slime_purple", spawnAs = "enemy_og_slime", primaryType = "slime", secondaryType = "dark", damage = 4, critchance = .1, attacktype = "ranged", isFlying = false },
-
     SGfuchsia = { name = "enemy_sg_plant_homing_8x", primaryType = "plant", secondaryType = "dark", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
-    SGsponge = { name = "enemy_sg_sponge_spitter", primaryType = "plant", secondaryType = "poison", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
+    SGsponge = { name = "enemy_sg_sponge_spitter", spawnAs = "enemy_ns_poison_spitter", primaryType = "plant", secondaryType = "poison", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
     SGsapphire = { name = "enemy_sg_plant_homing_faster", primaryType = "plant", secondaryType = "crystal", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
-
     vrdrovrdurgr = { name = "boss_verdure_overgrowth", primaryType = "plant", secondaryType = "dark", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
-    SGgraggot = { name = "enemy_sg_graggot", spawnAs = "enemy_id_maggot", primaryType = "plant", secondaryType = "", damage = 5, critchance = .12, attacktype = "melee", isFlying = false },
-    SGblaggot = { name = "abberrant_sg_graggot", spawnAs = "enemy_id_maggot", primaryType = "plant", secondaryType = "poison", damage = 5, critchance = .12, attacktype = "melee", isFlying = false },
+    SGgraggot = { name = "enemy_sg_graggot", spawnAs = "enemy_id_maggot", primaryType = "bug", secondaryType = "plant", damage = 5, critchance = .12, attacktype = "melee", isFlying = false },
+    SGblaggot = { name = "abberrant_sg_graggot", spawnAs = "enemy_id_maggot", primaryType = "plant", secondaryType = "bug", damage = 5, critchance = .12, attacktype = "melee", isFlying = false },
+
     -- PC
     PCslime = { name = "enemy_pc_slime", spawnAs = "enemy_fg_slime_phase", primaryType = "slime", secondaryType = "crystal", damage = 5, critchance = .12, attacktype = "melee", isFlying = false },
     PCcuringtome = { name = "enemy_pc_curing_tome", spawnAs = "enemy_invincibility_tome", primaryType = "magic", secondaryType = "crystal", damage = 0, critchance = 0, attacktype = "melee", isFlying = false },
@@ -145,6 +142,7 @@ function ADVR.onLoad()
 
     -- augment bool definitions --
     HasMasterBallAugment = false
+    HasNetBallAugment = false
     HasRepeatBallAugment = false
     HasUltraBallAugment = false
     HasTimerBallAugment = false
@@ -242,11 +240,16 @@ function ADVR.onPickupTaken(relic)
 
     if item == "dire_hit" then
         if ActiveMonObj ~= nil then
+            ActiveMonStats.criticalChance = ActiveMonStats.criticalChance + .1
+            table.insert(RelicsTaken, item)
+        end
+    end
+    if item == "scope_lens" then
+        if ActiveMonObj ~= nil then
             ActiveMonStats.criticalChance = ActiveMonStats.criticalChance + .2
             table.insert(RelicsTaken, item)
         end
     end
-
     if item == "aux_guard" then
         if ActiveMonObj ~= nil then
             ActiveMonBase.MaxHealth = ActiveMonBase.MaxHealth + 5
@@ -345,6 +348,20 @@ function ADVR.onPickupTaken(relic)
     end
     if item == "dark_glasses" then
         SetStatByType("dark", "damage", function(val) return val + 1 end)
+        table.insert(RelicsTaken, item)
+    end
+    if item == "sharp_beak" then
+        SetStatByType("flying", "damage", function(val) return val + 1 end)
+        table.insert(RelicsTaken, item)
+    end
+    if item == "silver_powder" then
+        SetStatByType("bug", "damage", function(val) return val + 1 end)
+        table.insert(RelicsTaken, item)
+    end
+    if item == "gold_razz" then
+        table.insert(RelicsTaken, item)
+    end
+    if item == "razz_berry" then
         table.insert(RelicsTaken, item)
     end
 end
@@ -481,12 +498,19 @@ function ADVR.onPickup()
 
     HasParkBallAugment = augment ~= nil and augment.eventsRegistered
 
+    augment = game.progressHandler.GetProgressById("net_ball")
+
+    HasNetBallAugment = augment ~= nil and augment.eventsRegistered
+
 
     if HasUltraBallAugment then
         BaseChanceForCatch = BaseChanceForCatch + .1
     end
     if HasShinyCharmAugment then
         BaseShinyChance = BaseShinyChance * 2
+    end
+    if SHINYTESTING then
+        BaseShinyChance = 100
     end
 end
 
@@ -647,7 +671,8 @@ function MoveBullet(projectile, duration, startPos, endEnemy)
 
         ActiveMonGetStats(ActiveMon, enemyBase.MaxHealth)
         local abr = string.match(tostring(ActiveMon), "abberrant")
-        onMonCaught(ActiveMon, ActiveMonStats.isShiny, abr, endPos)
+        local modded = string.match(tostring(ActiveMon), "pc") or string.match(tostring(ActiveMon), "sg")
+        onMonCaught(ActiveMon, ActiveMonStats.isShiny, modded, endPos)
         game.Delete(endEnemy.gameObject)
         game.Delete(projectile)
         game.itemInterpreter.currentUsable.currentCharge = game.itemInterpreter.currentUsable.amountUses
@@ -655,26 +680,63 @@ function MoveBullet(projectile, duration, startPos, endEnemy)
     end
 end
 
+local DELIMITER = ","
+
+function GetList(key)
+    local raw = game.LoadString(key, "")
+    if raw == "" or raw == nil then return {} end
+    local list = {}
+    for entry in raw:gmatch("[^,]+") do
+        table.insert(list, entry)
+    end
+    return list
+end
+
+function HasInList(key, name)
+    return table.contains(GetList(key), name)
+end
+
+function AddToList(key, name)
+    if HasInList(key, name) then return end
+    local list = GetList(key)
+    table.insert(list, name)
+    game.SaveString(key, table.concat(list, DELIMITER))
+end
+
 ---@diagnostic disable-next-line: lowercase-global
-function onMonCaught(name, shiny, abrnt, pos)
+function onMonCaught(name, shiny, modded, pos)
+    if not modded then
+    AddToList("EnemiesCaught", name)
+
+    if shiny then
+        AddToList("EnemiesShinyCaught", name)
+        game.ShowMessageInWorld("<color=#c8960c>Sh</color><color=#e8b84b>in</color><color=#f5d78e>y</color>", .5)
+        game.SaveBool("CaughtShiny", true)
+    end
+
     local saved = game.LoadInt("pokemoncaught", 1)
-    saved = saved + 1
-    game.SaveInt("pokemoncaught", saved)
+    game.SaveInt("pokemoncaught", saved + 1)
+end
+if modded then
+     AddToList("ModdedEnemiesCaught", name)
+     if shiny then
+        AddToList("ModdedEnemiesShinyCaught", name)
+        game.ShowMessageInWorld("<color=#c8960c>Sh</color><color=#e8b84b>in</color><color=#f5d78e>y</color>", .5)
+        game.SaveBool("CaughtShiny", true)
+    end
+end
     if table.contains(RelicsTaken, "pinap_berry") then
         for i = 1, math.random(3, 5) do
             game.SpawnObjectNetwork(objects.ITEM_COIN, pos)
         end
     end
+
     if table.contains(RelicsTaken, "silver_pinap_berry") then
-        for i = 1, math.random(3) do
+        for i = 1, math.random(1, 3) do
             game.SpawnObjectNetwork(objects.ITEM_KEY, pos)
         end
     end
-    if shiny then
-        game.ShowMessageInWorld("<color=#c8960c>Sh</color><color=#e8b84b>in</color><color=#f5d78e>y</color>", .5)
 
-        game.SaveBool("CaughtShiny", true)
-    end
 end
 
 function HasAbrntVersion(name)
@@ -727,11 +789,9 @@ end
 function CannotCatchEnemy(enemy)
     local Unable = {
         "enemy_id_goo_exploding",
-        "enemy_invincibility_tome",
         "boss_the_beast",
         "boss_mushroom",
         "boss_doomshroom",
-        "enemy_golden_slime",
         "enemy_challenge_ghost",
         "boss_fly_hive",
     }
@@ -791,6 +851,9 @@ function Throwball()
         if HasDuskBallAugment and (EnemyType.primary == "dark" or EnemyType.secondary == "dark") then
             chancetocatch = chancetocatch + .075
         end
+        if HasNetBallAugment and (EnemyType.primary == "bug" or EnemyType.secondary == "bug") then
+            chancetocatch = chancetocatch + .075
+        end
         if HasSlimeBallAugment and (EnemyType.primary == "slime" or EnemyType.secondary == "slime") then
             chancetocatch = chancetocatch + .075
         end
@@ -821,6 +884,14 @@ function Throwball()
         local room = game.currentWorldGenerator.GetRoomAtRealPos(player.transform.position)
         if HasParkBallAugment and room.type == roomTypes.SEALED then
             chancetocatch = chancetocatch + .05
+        end
+         if table.contains(RelicsTaken, "gold_razz")  then
+            chancetocatch = chancetocatch + .35
+           table.remove(RelicsTaken, table.find(RelicsTaken, "gold_razz"))
+        end
+          if table.contains(RelicsTaken, "razz_berry")  then
+            chancetocatch = chancetocatch + .05
+           table.remove(RelicsTaken, table.find(RelicsTaken, "razz_berry"))
         end
 
         if helperMethods.IsValidWithLuck(0, 1, chancetocatch) then
@@ -968,12 +1039,17 @@ function TypeDamage(target, primary, secondary, MonAttack)
         if EnemyPrimaryType == "undead" or EnemySecondaryType == "undead" then
             modifier = modifier + 0.2
         end
-
+        if EnemyPrimaryType == "plant" or EnemySecondaryType == "plant" then
+            modifier = modifier + 0.1
+        end
         if EnemyPrimaryType == "stone" or EnemySecondaryType == "stone" then
-            modifier = modifier - 0.2
+            modifier = modifier - 0.15
         end
         if EnemyPrimaryType == "steel" or EnemySecondaryType == "steel" then
-            modifier = modifier - 0.2
+            modifier = modifier - 0.22
+        end
+        if EnemyPrimaryType == "dark" or EnemySecondaryType == "dark" then
+            modifier = modifier - 0.03
         end
     end
     if primary == "poison" or secondary == "poison" then
@@ -1008,8 +1084,14 @@ function TypeDamage(target, primary, secondary, MonAttack)
         if EnemyPrimaryType == "dark" or EnemySecondaryType == "dark" then
             modifier = modifier + 0.2
         end
+        if EnemyPrimaryType == "crystal" or EnemySecondaryType == "crystal" then
+            modifier = modifier + 0.1
+        end
         if EnemyPrimaryType == "slime" or EnemySecondaryType == "slime" then
             modifier = modifier - 0.18
+        end
+        if EnemyPrimaryType == "bug" or EnemySecondaryType == "bug" then
+            modifier = modifier - 0.13
         end
     end
     if primary == "stone" or secondary == "stone" then
@@ -1075,10 +1157,30 @@ function TypeDamage(target, primary, secondary, MonAttack)
             modifier = modifier + 0.22
         end
         if EnemyPrimaryType == "steel" or EnemySecondaryType == "steel" then
-            modifier = modifier + 0.22
+            modifier = modifier + 0.05
+        end
+        if EnemyPrimaryType == "bug" or EnemySecondaryType == "bug" then
+            modifier = modifier + 0.12
         end
         if EnemyPrimaryType == "stone" or EnemySecondaryType == "stone" then
             modifier = modifier - 0.2
+        end
+        if EnemyPrimaryType == "crystal" or EnemySecondaryType == "crystal" then
+            modifier = modifier - 0.15
+        end
+    end
+    if primary == "bug" or secondary == "bug" then
+        if EnemyPrimaryType == "plant" or EnemySecondaryType == "plant" then
+            modifier = modifier + 0.22
+        end
+        if EnemyPrimaryType == "dark" or EnemySecondaryType == "dark" then
+            modifier = modifier + 0.1
+        end
+        if EnemyPrimaryType == "stone" or EnemySecondaryType == "stone" then
+            modifier = modifier - 0.1
+        end
+        if EnemyPrimaryType == "slime" or EnemySecondaryType == "slime" then
+            modifier = modifier - 0.1
         end
     end
     return modifier
