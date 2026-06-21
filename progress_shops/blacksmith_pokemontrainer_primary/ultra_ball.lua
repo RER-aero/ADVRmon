@@ -1,6 +1,6 @@
 function ADVR.onLoad()
     progress.name = "Ultra Ball"
-    progress.desc = "Allows you to catch enemis with a higher success rate"
+    progress.desc = "Increases your base catch chance by 10%"
 	progress.price = 5
 	progress.currency = "beastblood"
 
