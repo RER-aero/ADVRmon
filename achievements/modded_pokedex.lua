@@ -24,7 +24,7 @@ end
 function GetProgressInfo()
     local collected = GetList("ModdedEnemiesCaught")
 
-    return #collected, 27 - 7
+    return #collected, 27 
 end
 
 function GetList(key)

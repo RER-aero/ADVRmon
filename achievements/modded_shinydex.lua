@@ -20,12 +20,12 @@ function HasCaughtEveything()
    local count
    local list = GetList("ModdedEnemiesShinyCaught")
 
-    return #list >= 27
+    return #list >= 23
 end
 function GetProgressInfo()
     local collected = GetList("ModdedEnemiesShinyCaught")
 
-    return #collected, 27
+    return #collected, 23
 end
 
 function GetList(key)

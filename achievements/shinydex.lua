@@ -6,7 +6,7 @@ function ADVR.onLoad()
     achievement.predecessors = {achievements.GOOD_LUCK}
     achievement.showProgressBar = true
     achievement.category = "exploration"
-    achievement.unlocksItem = "gold:100"
+    achievement.unlocksItem = "coins:100"
 end
 
 
@@ -19,12 +19,12 @@ end
 function HasCaughtEveything()
    local list = GetList("EnemiesShinyCaught")
 
-    return #list >= 76 - 7
+    return #list >= 77 - 11
 end
 function GetProgressInfo()
     local collected = GetList("EnemiesShinyCaught")
 
-    return #collected, 76 - 7
+    return #collected, 77 - 11
 end
 
 function GetList(key)

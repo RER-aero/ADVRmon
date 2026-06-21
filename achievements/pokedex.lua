@@ -19,12 +19,12 @@ function HasCaughtEveything()
   
    local list = GetList("EnemiesCaught")
 
-    return #list >= 76 - 7
+    return #list >= 77 - 9
 end
 function GetProgressInfo()
     local collected = GetList("EnemiesCaught")
 
-    return #collected, 76 - 7
+    return #collected, 77 - 9
 end
 
 function GetList(key)
