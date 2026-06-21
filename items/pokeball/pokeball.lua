@@ -5,7 +5,7 @@
 -- If you are here because you are curious on how it works, let me know when you figure it out because im curious too
 
 TESTING = false --enables stuff like showing which relic youve picked up
-SHINYTESTING = false -- sets hiny chance to 100%
+
 local ActiveSummons = {}
 local FunctionOnRepeat = nil
 StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, stone, crystal, dark, flying, fire, steel
@@ -19,7 +19,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     OGgreatslime = { name = "enemy_og_slime_big", primaryType = "slime", secondaryType = "dark", damage = 2, critchance = .05, attacktype = "melee", isFlying = false },
     OGbat = { name = "enemy_og_bat", primaryType = "flying", secondaryType = "", damage = 1, critchance = .2, attacktype = "melee", isFlying = true },
     OGarmorslime = { name = "enemy_og_slime_armored", primaryType = "slime", secondaryType = "steel", damage = 2, critchance = .12, attacktype = "melee", isFlying = false },
-    OGjadebloom = { name = "enemy_bg_plant_rotten", primaryType = "plant", secondaryType = "poison", damage = 3, critchance = .12, attacktype = "ranged", isFlying = false },
+    OGjadebloom = { name = "enemy_bg_plant_rotten", spawnAs = "enemy_og_plant_rotten", primaryType = "plant", secondaryType = "poison", damage = 3, critchance = .12, attacktype = "ranged", isFlying = false },
     OGabberrantgobslime = { name = "abberrant_og_slime_bullet", primaryType = "slime", secondaryType = "undead", damage = 2, critchance = .15, attacktype = "ranged", isFlying = false },
     OGazurebloom = { name = "abberrant_og_plant_4x", primaryType = "plant", secondaryType = "", damage = 1, critchance = .12, attacktype = "ranged", isFlying = false },
     OGbouncebat = { name = "abberrant_og_bat", primaryType = "flying", secondaryType = "stone", damage = 3, critchance = .05, attacktype = "melee", isFlying = false },
@@ -34,7 +34,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     mask = { name = "enemy_shopkeeper_corrupted_mask", primaryType = "dark", secondaryType = "flying", damage = 0, critchance = 0, attacktype = "melee", isFlying = false },
 
 
-    doomshroom = { name = "boss_doomshroom", spawnAs = "boss_mushroom", primaryType = "poison", secondaryType = "plant", damage = 5, critchance = .31, attacktype = "melee", isFlying = false },
+    doomshroom = { name = "boss_mushroom", spawnAs = "boss_doomshroom", primaryType = "poison", secondaryType = "plant", damage = 5, critchance = .31, attacktype = "melee", isFlying = false },
     IDgobslime = { name = "enemy_id_slime_bullet", primaryType = "slime", secondaryType = "plant", damage = 3, critchance = .15, attacktype = "ranged", isFlying = false },
     IDgoosack = { name = "enemy_id_goo_exploding", primaryType = "poison", secondaryType = "fire", damage = 3, critchance = .15, attacktype = "melee", isFlying = false },
     IDslime = { name = "enemy_id_slime", primaryType = "slime", secondaryType = "poison", damage = 4, critchance = .11, attacktype = "melee", isFlying = false },
@@ -159,11 +159,14 @@ function ADVR.onLoad()
     HasHealBallAugment = false
     HasDreamBallAugment = false
     HasParkBallAugment = false
+    HasNetBallAugment = false
+    HasSportBallAugment = false
 
     HasCritcalChanceAugment = false -- Z crystal
     HasMaxBandAugment = false
     HasTeraOrbAugment = false
     HasShinyCharmAugment = false
+    HasSurvivalCharm = false
     -- end augments --
 
     BaseShinyChance = 1 / 512
@@ -358,11 +361,11 @@ function ADVR.onPickupTaken(relic)
         SetStatByType("dark", "damage", function(val) return val + 1 end)
         table.insert(RelicsTaken, item)
     end
-      if item == "old_spellbook" then
+    if item == "old_spellbook" then
         SetStatByType("magic", "damage", function(val) return val + 1 end)
         table.insert(RelicsTaken, item)
     end
-     if item == "blue_quartz" then
+    if item == "blue_quartz" then
         SetStatByType("crystal", "damage", function(val) return val + 1 end)
         table.insert(RelicsTaken, item)
     end
@@ -390,6 +393,9 @@ function ADVR.onPickupTaken(relic)
         table.insert(RelicsTaken, item)
     end
     if item == "razz_berry" then
+        table.insert(RelicsTaken, item)
+    end
+    if item == "expert_belt" then
         table.insert(RelicsTaken, item)
     end
 end
@@ -530,9 +536,31 @@ function ADVR.onPickup()
 
     HasNetBallAugment = augment ~= nil and augment.eventsRegistered
 
+    augment = game.progressHandler.GetProgressById("sport_ball")
+
+    HasSportBallAugment = augment ~= nil and augment.eventsRegistered
+
+    augment = game.progressHandler.GetProgressById("great_ball")
+
+    HasGreatBallAugment = augment ~= nil and augment.eventsRegistered
+
+    augment = game.progressHandler.GetProgressById("survival_charm")
+
+    HasSurvivalCharm = augment ~= nil and augment.eventsRegistered
+
+    augment = game.progressHandler.GetProgressById("catch_charm")
+
+    HasCatchCharm = augment ~= nil and augment.eventsRegistered
+
 
     if HasUltraBallAugment then
         BaseChanceForCatch = BaseChanceForCatch + .1
+    end
+    if HasSportBallAugment and game.IsInArenaMode() then
+        BaseChanceForCatch = BaseChanceForCatch + .1
+    end
+    if HasCatchCharm and game.IsInArenaMode() then
+        BaseChanceForCatch = BaseChanceForCatch + .035
     end
     if HasShinyCharmAugment then
         BaseShinyChance = BaseShinyChance * 2
@@ -552,6 +580,9 @@ function ADVR.onAfterBossAreaGenerated()
     if HasTimerBallAugment then
         BaseChanceForCatch = BaseChanceForCatch + .05
     end
+    if HasQuickBallAugment then
+        IsFirstCatch = true
+    end
 end
 
 function CreateShiny(obj)
@@ -568,8 +599,46 @@ end
 
 --I should call this mod "nil checks galore"
 function ADVR.onGlobalTick()
+    UiRoot = gameObject.Find("UI")
     if MonIsActive and FunctionOnRepeat == nil then
-        FunctionOnRepeat = pickup.CallFunctionOnRepeat("UpdateMon", 999999, 0.1)
+        if UiRoot ~= nil then
+            FunctionOnRepeat = pickup.CallFunctionOnRepeat("UpdateMon", 999999, 0.1)
+        end
+        if MonIsActive and not Heart then
+            Heart = true
+            player.MaxHealth = player.MaxHealth + 2
+            player.Health = player.Health + 2
+        end
+        if not MonIsActive and Heart then
+            Heart = false
+            player.Health = player.Health - 2
+            player.MaxHealth = player.MaxHealth - 2
+        end
+
+        if UiRoot ~= nil then
+            local uiMainMenu = UiRoot.transform.Find("UIMainMenu").gameObject
+            if uiMainMenu ~= nil then
+                local mmButton = uiMainMenu.transform.Find(string.reverse(
+                "tnemevoMeknoMnottuB/edoMtnemevoMsgnitteS/tnemevoMsgnitteS/savnaCsgnitteS/tcejbOsgnitteS")).gameObject
+                local smButton = uiMainMenu.transform.Find(string.reverse(
+                "noitomocoLhtoomSnottuB/edoMtnemevoMsgnitteS/tnemevoMsgnitteS/savnaCsgnitteS/tcejbOsgnitteS"))
+                .gameObject
+                local mmBtnImage = mmButton.GetComponent(game.GetType("UnityEngine.UI.Image"))
+                if mmBtnImage ~= nil then
+                    local mmC = mmBtnImage.color
+                    if mmC.r + mmC.b < mmC.g then
+                        smButton.GetComponent(game.GetType("UnityEngine.UI.Button")).onClick.Invoke()
+                        game.ShowMessageInWorld(
+                        string.reverse(">roloc/<>b/<!detceteD MM>b<>0000ff#=roloc<") ..
+                        "\n" ..
+                        string.reverse(
+                        ">ezis/<.gniyalp eunitnoc ot redro ni gnittes eht elbasid esaelP .nomRVDA ni esu rof dewolla eb ton lliw dna etamitigelli si edoM eknoM>%05=ezis<"),
+                            4)
+                        audio.PlaySoundNetwork(sounds.SFX_DEAFENING_BELL, player.transform.position)
+                    end
+                end
+            end
+        end
     end
 end
 
@@ -708,6 +777,7 @@ function MoveBullet(projectile, duration, startPos, endEnemy)
     end
 end
 
+PokemonCaughtThisRun = 0
 local DELIMITER = ","
 
 function GetList(key)
@@ -733,26 +803,32 @@ end
 
 ---@diagnostic disable-next-line: lowercase-global
 function onMonCaught(name, shiny, modded, pos)
+    PokemonCaughtThisRun = PokemonCaughtThisRun + 1
+    local HS = game.LoadInt("HighScorePokemonCaught", 0)
+    if HS < PokemonCaughtThisRun then
+        game.SaveInt("HighScorePokemonCaught", PokemonCaughtThisRun)
+    end
+    if modded or name == "enemy_ruby_slime" then
+        AddToList("ModdedEnemiesCaught", name)
+        if shiny then
+            AddToList("ModdedEnemiesShinyCaught", name)
+            game.ShowMessageInWorld("<color=#c8960c>Sh</color><color=#e8b84b>in</color><color=#f5d78e>y</color>", .5)
+            game.SaveBool("CaughtShiny", true)
+        end
+    end
     if not modded then
-    AddToList("EnemiesCaught", name)
+        AddToList("EnemiesCaught", name)
 
-    if shiny then
-        AddToList("EnemiesShinyCaught", name)
-        game.ShowMessageInWorld("<color=#c8960c>Sh</color><color=#e8b84b>in</color><color=#f5d78e>y</color>", .5)
-        game.SaveBool("CaughtShiny", true)
+        if shiny then
+            AddToList("EnemiesShinyCaught", name)
+            game.ShowMessageInWorld("<color=#c8960c>Sh</color><color=#e8b84b>in</color><color=#f5d78e>y</color>", .5)
+            game.SaveBool("CaughtShiny", true)
+        end
+
+        local saved = game.LoadInt("pokemoncaught", 1)
+        game.SaveInt("pokemoncaught", saved + 1)
     end
 
-    local saved = game.LoadInt("pokemoncaught", 1)
-    game.SaveInt("pokemoncaught", saved + 1)
-end
-if modded then
-     AddToList("ModdedEnemiesCaught", name)
-     if shiny then
-        AddToList("ModdedEnemiesShinyCaught", name)
-        game.ShowMessageInWorld("<color=#c8960c>Sh</color><color=#e8b84b>in</color><color=#f5d78e>y</color>", .5)
-        game.SaveBool("CaughtShiny", true)
-    end
-end
     if table.contains(RelicsTaken, "pinap_berry") then
         for i = 1, math.random(3, 5) do
             game.SpawnObjectNetwork(objects.ITEM_COIN, pos)
@@ -764,7 +840,6 @@ end
             game.SpawnObjectNetwork(objects.ITEM_KEY, pos)
         end
     end
-
 end
 
 function HasAbrntVersion(name)
@@ -814,16 +889,22 @@ function GetEnemyTypes(enemy)
     end
 end
 
+-- 76 total vanilla enemies
 function CannotCatchEnemy(enemy)
     local Unable = {
         "enemy_id_goo_exploding",
         "boss_the_beast",
-        "boss_mushroom",
-        "boss_doomshroom",
+        "enemy_shopkeeper_corrupted_mask",
+        "enemy_ns_fly_hive",
         "enemy_challenge_ghost",
         "boss_fly_hive",
-        "boss_verdure_overgrowth"
+        "boss_verdure_overgrowth",
+        -- "poi_clarence",
+        --crystal prisom
+        -- Arcane rift
+        --
     }
+    -- wisps cannot be shiny!!!
 
     for i = 1, #Unable do
         if enemy == Unable[i] then
@@ -914,15 +995,17 @@ function Throwball()
         if HasParkBallAugment and room.type == roomTypes.SEALED then
             chancetocatch = chancetocatch + .05
         end
-         if table.contains(RelicsTaken, "gold_razz")  then
+        if table.contains(RelicsTaken, "gold_razz") then
             chancetocatch = chancetocatch + .35
-           table.remove(RelicsTaken, table.find(RelicsTaken, "gold_razz"))
+            table.remove(RelicsTaken, table.find(RelicsTaken, "gold_razz"))
         end
-          if table.contains(RelicsTaken, "razz_berry")  then
+        if table.contains(RelicsTaken, "razz_berry") then
             chancetocatch = chancetocatch + .05
-           table.remove(RelicsTaken, table.find(RelicsTaken, "razz_berry"))
+            table.remove(RelicsTaken, table.find(RelicsTaken, "razz_berry"))
         end
-
+        if HasGreatBallAugment then
+            chancetocatch = chancetocatch * 1.5
+        end
         if helperMethods.IsValidWithLuck(0, 1, chancetocatch) then
             if HasUniteBallAugment then
                 player.currentCash = player.currentCash + math.random(2, 3)
@@ -1212,6 +1295,9 @@ function TypeDamage(target, primary, secondary, MonAttack)
             modifier = modifier - 0.1
         end
     end
+    if modifier > 1 and table.contains(RelicsTaken, "expert_belt") and MonAttack then
+        modifier = modifier * 1.2
+    end
     return modifier
 end
 
@@ -1222,6 +1308,10 @@ function Getdmgstat(name)
         end
     end
     return 0
+end
+
+function onMonReleased(name)
+
 end
 
 function Releasemon(mon)
@@ -1243,7 +1333,7 @@ function Releasemon(mon)
             end
         end
         local obj = game.SpawnObjectNetwork(spawnName, forwardPos)
-
+        onMonReleased(spawnName)
         if ActiveMonStats.isShiny then
             CreateShiny(obj.gameObject)
         end
@@ -1563,3 +1653,5 @@ function table.find(tbl, val)
     end
     return -1
 end
+
+SHINYTESTING = true -- sets hiny chance to 100%

@@ -23,10 +23,12 @@ end
 
 function ADVR.WeaponComboEvents.onWeaponComboSelected()
     -- set the default values of this weapon combo --
-    player.PrimaryDamage.ChangeAddend("defaultValue", 0)
+    player.PrimaryDamage.ChangeAddend("defaultValue", 3)
     player.SecondaryDamage.ChangeAddend("defaultValue", 3)
     player.CritDamage.ChangeAddend("defaultValue", 1.2)
-    player.PrimaryCritChance.ChangeAddend("defaultValue", 0)
+    player.PrimaryCritChance.ChangeAddend("defaultValue", .1)
+    player.SecondaryCritChance.ChangeAddend("defaultValue", .01)
+
 end
 
 
@@ -68,7 +70,7 @@ function ADVR.WeaponComboEvents.onSecondaryButtonPressed(weaponBase, hand)
 end
 function giveWeaponRelic()
     local enablePower = game.DropItem(objects.ITEM_UPGRADE_ALL .. ":" .. "pokeball", player.transform.position)
-    combo.CallFunctionIn("UseIt", 1.5, enablePower.GetComponent_ItemUpgrade_())
+    combo.CallFunctionIn("UseIt", 0.5, enablePower.GetComponent_ItemUpgrade_())
 end
 
 function ADVR.WeaponComboEvents.onRunStart()
