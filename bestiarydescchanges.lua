@@ -31,7 +31,7 @@ function ChangeNames()
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_og_wight_advanced_bestiary_name",
         "Overgrown Zombie Lunger <color=#59310b>(Undead)</color> <color=#150515>(D</color><color=#241024>a</color><color=#341a34>r</color><color=#472547>k)</color> ")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_og_slime_big_bestiary_name",
-        "Overgrown Great Slime <color=#0f5a0d>(S</color><color=#178514>l</color><color=#1ea819>i</color><color=#26ce21>m</color><color=#5cdc58>e)</color> <color=#150515>(D</color><color=#241024>a</color><color=#341a34>r</color><color=#472547>k)</color> ")
+        "Overgrown Great Slime <color=#0f5a0d>(S</color><color=#178514>l</color><color=#1ea819>i</color><color=#26ce21>m</color><color=#5cdc58>e)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_og_bat_bestiary_name",
         "Overgrown Bat <color=#9dcad5>(Fl</color><color=#b5d8e2>yi</color><color=#cce2ea>ng</color><color=#e8f4f7>)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_og_slime_armored_bestiary_name",
@@ -39,15 +39,15 @@ function ChangeNames()
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_og_plant_rotten_bestiary_name",
         "Jade Bloom <color=#9ae560>(Plant)</color> <color=#880696>(Poison)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("abberrant_og_slime_bullet_bestiary_name",
-        "Aberrant Gob Slime <color=#ff99ff>(Aberrant)</color> <color=#0f5a0d>(S</color><color=#178514>l</color><color=#1ea819>i</color><color=#26ce21>m</color><color=#5cdc58>e)</color> <color=#59310b>(Undead)</color>")
+        "<color=#ff99ff>(Aberrant)</color> Aberrant Gob Slime <color=#0f5a0d>(S</color><color=#178514>l</color><color=#1ea819>i</color><color=#26ce21>m</color><color=#5cdc58>e)</color> <color=#59310b>(Undead)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("abberrant_og_plant_4x_bestiary_name",
-        "Azure Bloom <color=#ff99ff>(Aberrant)</color> <color=#9ae560>(Plant)</color>")
+        "<color=#ff99ff>(Aberrant)</color> Azure Bloom <color=#9ae560>(Plant)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("abberrant_og_bat_bestiary_name",
-        "Overgrown Bounce Bat <color=#ff99ff>(Aberrant)</color> <color=#9dcad5>(Fl</color><color=#b5d8e2>yi</color><color=#cce2ea>ng</color><color=#e8f4f7>)</color> <color=#877e68>(Stone)</color>")
+        "<color=#ff99ff>(Aberrant)</color> Overgrown Bounce Bat <color=#9dcad5>(Fl</color><color=#b5d8e2>yi</color><color=#cce2ea>ng</color><color=#e8f4f7>)</color> <color=#877e68>(Stone)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_bg_plant_rotten_bestiary_name",
         "Jade Bloom <color=#9ae560>(Plant)</color> <color=#880696>(Poison)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("poi_clarence_bestiary_name",
-        "Clarence <color=#0f5a0d>(S</color><color=#178514>l</color><color=#1ea819>i</color><color=#26ce21>m</color><color=#5cdc58>e)</color> ")
+        "<color=#5acce2>(POI)</color> Clarence <color=#0f5a0d>(S</color><color=#178514>l</color><color=#1ea819>i</color><color=#26ce21>m</color><color=#5cdc58>e)</color> ")
 
 
     -- ID
@@ -66,15 +66,15 @@ function ChangeNames()
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_id_exploding_maggot_bestiary_name",
         "Exploding Goo <color=#880696>(Poison)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("abberant_id_bat_bestiary_name",
-        "Infested Bounce Bat <color=#ff99ff>(Aberrant)</color> <color=#9dcad5>(Fl</color><color=#b5d8e2>yi</color><color=#cce2ea>ng</color><color=#e8f4f7>)</color> <color=#877e68>(Stone)</color>")
+        "<color=#ff99ff>(Aberrant)</color> Infested Bounce Bat <color=#9dcad5>(Fl</color><color=#b5d8e2>yi</color><color=#cce2ea>ng</color><color=#e8f4f7>)</color> <color=#877e68>(Stone)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_id_bat_bestiary_name",
         "Infested Bat <color=#9dcad5>(Fl</color><color=#b5d8e2>yi</color><color=#cce2ea>ng</color><color=#e8f4f7>)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("abberrant_id_slime_big_bestiary_name",
-        "Infested Great Slime <color=#ff99ff>(Aberrant)</color> <color=#0f5a0d>(S</color><color=#178514>l</color><color=#1ea819>i</color><color=#26ce21>m</color><color=#5cdc58>e)</color> <color=#150515>(D</color><color=#241024>a</color><color=#341a34>r</color><color=#472547>k)</color> ")
+        "<color=#ff99ff>(Aberrant)</color> Infested Great Slime <color=#0f5a0d>(S</color><color=#178514>l</color><color=#1ea819>i</color><color=#26ce21>m</color><color=#5cdc58>e)</color> <color=#150515>(D</color><color=#241024>a</color><color=#341a34>r</color><color=#472547>k)</color> ")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("abberrant_id_bat_bestiary_name",
-        "Infested Bounce Bat <color=#ff99ff>(Aberrant)</color> <color=#9dcad5>(Fl</color><color=#b5d8e2>yi</color><color=#cce2ea>ng</color><color=#e8f4f7>)</color> <color=#880696>(Poison)</color>")
+        "<color=#ff99ff>(Aberrant)</color> Infested Bounce Bat <color=#9dcad5>(Fl</color><color=#b5d8e2>yi</color><color=#cce2ea>ng</color><color=#e8f4f7>)</color> <color=#880696>(Poison)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("abberrant_id_exploding_maggot_bestiary_name",
-        "<color=#ff99ff>(Aberrant)</color> Infested Bomb Grub <color=#6a8a1a>(B</color><color=#8fb52a>u</color><color=#b3d940>g</color><color=#c6ef56>)</color> <color=#f95909>(Fi</color><color=#fb7c3a>re</color><color=#fdc49a>)</color>")
+        "<color=#ff99ff>(Aberrant)</color> Infested Bomb Grub <color=#f95909>(Fi</color><color=#fb7c3a>re</color><color=#fdc49a>)</color> <color=#6a8a1a>(B</color><color=#8fb52a>u</color><color=#b3d940>g</color><color=#c6ef56>)</color> ")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_id_goo_exploding_bestiary_name",
         "Exploding Goo <color=#880696>(Poison)</color> <color=#f95909>(Fi</color><color=#fb7c3a>re</color><color=#fdc49a>)</color>")
 
@@ -101,7 +101,7 @@ function ChangeNames()
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("abberrant_fg_wisp_bestiary_name",
         "<color=#ff99ff>(Aberrant)</color> Purple Wisp <color=#7277f1>(Ma</color><color=#9599f5>gi</color><color=#bbbdf9>c)</color> <color=#f95909>(Fi</color><color=#fb7c3a>re</color><color=#fdc49a>)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("poi_arcane_rift_bestiary_name",
-        "Arcane Rift <color=#7277f1>(Ma</color><color=#9599f5>gi</color><color=#bbbdf9>c)</color>")
+        "<color=#5acce2>(POI)</color> Arcane Rift <color=#7277f1>(Ma</color><color=#9599f5>gi</color><color=#bbbdf9>c)</color>")
 
     -- Special
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_slime_golden_bestiary_name",
@@ -121,11 +121,11 @@ function ChangeNames()
         "<color=#d4af37>(Special)</color> Restless Soul <color=#59310b>(Undead)</color> <color=#7277f1>(Ma</color><color=#9599f5>gi</color><color=#bbbdf9>c)</color>")
     -- BOSS
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("boss_deranged_adventurer_bestiary_name",
-        "Deranged Adventurer <color=#ff0000>(Boss)</color> <color=#150515>(D</color><color=#241024>a</color><color=#341a34>r</color><color=#472547>k)</color> ")
+        "<color=#ff0000>(Boss)</color> Deranged Adventurer <color=#150515>(D</color><color=#241024>a</color><color=#341a34>r</color><color=#472547>k)</color> ")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("boss_king_slime_bestiary_name",
-        "King Slime <color=#ff0000>(Boss)</color> <color=#0f5a0d>(S</color><color=#178514>l</color><color=#1ea819>i</color><color=#26ce21>m</color><color=#5cdc58>e)</color>")
+        "<color=#ff0000>(Boss)</color> King Slime<color=#0f5a0d>(S</color><color=#178514>l</color><color=#1ea819>i</color><color=#26ce21>m</color><color=#5cdc58>e)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("boss_doomshroom_bestiary_name",
-        "Doomshroom <color=#ff0000>(Boss)</color> <color=#880696>(Poison)</color> <color=#9ae560>(Plant)</color>")
+        "<color=#ff0000>(Boss)</color> Doomshroom <color=#880696>(Poison)</color> <color=#9ae560>(Plant)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("boss_rabid_bestiary_bestiary_name",
         "<color=#ff0000>(Boss)</color> Rabid Pokedex <color=#7277f1>(Ma</color><color=#9599f5>gi</color><color=#bbbdf9>c)</color> <color=#150515>(D</color><color=#241024>a</color><color=#341a34>r</color><color=#472547>k)</color> ")
 
@@ -133,7 +133,7 @@ function ChangeNames()
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("boss_fly_hive_bestiary_name",
         "<color=#ff0000>(Boss)</color> The Swarm <color=#9dcad5>(Fl</color><color=#b5d8e2>yi</color><color=#cce2ea>ng</color><color=#e8f4f7>)</color> <color=#880696>(Poison)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("boss_the_beast_stage3_bestiary_name",
-        "<color=#ff0000>(Boss)</color> The Beast <color=#150515>(D</color><color=#241024>a</color><color=#341a34>r</color><color=#472547>k)</color> ")
+        "<color=#ff0000>(Boss)</color> The Beast <color=#150515>(D</color><color=#241024>a</color><color=#341a34>r</color><color=#472547>k)</color> <color=#f95909>(Fi</color><color=#fb7c3a>re</color><color=#fdc49a>)</color>")
     -- NS
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_ns_fly_bestiary_name",
         "Fly <color=#6a8a1a>(B</color><color=#8fb52a>u</color><color=#b3d940>g</color><color=#c6ef56>)</color> <color=#9dcad5>(Fl</color><color=#b5d8e2>yi</color><color=#cce2ea>ng</color><color=#e8f4f7>)</color>")
@@ -152,7 +152,7 @@ function ChangeNames()
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_ns_wight_drowned_bestiary_name",
         "Noxious Drowned Zombie <color=#59310b>(Undead)</color> <color=#880696>(Poison)</color>")
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_poi_poison_sentry_bestiary_name",
-        "Noxious Sprig <color=#880696>(Poison)</color> <color=#9ae560>(Plant)</color>")
+        "<color=#5acce2>(POI)</color> Noxious Sprig <color=#880696>(Poison)</color> <color=#9ae560>(Plant)</color>")
 
     -- LD
     game.localizationInterpreter.currentlySelectedLanguage.SetTranslation("enemy_ld_plant_crystal_bestiary_name",
