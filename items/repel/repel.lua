@@ -3,7 +3,7 @@ function ADVR.onLoad()
     pickup.desc = "An item that drives away a few wild Pokémon so you won't encounter them."
 	pickup.weight = 85
 	pickup.tier = 1
-	pickup.maxAmount = 10
+	pickup.maxAmount = 3
 	pickup.amountUses = -1
 	pickup.price = 10
 	pickup.spawnsIn = {relicPool.SECRET, relicPool.SHOP, relicPool.SACRIFICE}

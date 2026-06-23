@@ -3,7 +3,7 @@ function ADVR.onLoad()
     pickup.desc = "An item to be held by a Pokémon. It's a well-worn belt that slightly boosts the power of the holder's supereffective moves. "
 	pickup.weight = 80
 	pickup.tier = 1
-	pickup.maxAmount = 10
+	pickup.maxAmount = 1
 	pickup.amountUses = -1
 	pickup.price = 10
 	pickup.spawnsIn = {relicPool.PODEST, relicPool.SHOP, relicPool.SECRET}

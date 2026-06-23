@@ -16,7 +16,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     OGwight = { name = "enemy_og_wight", primaryType = "undead", secondaryType = "", damage = 3, critchance = .1, attacktype = "melee", isFlying = false },
     OGcrawlingwight = { name = "enemy_og_wight_crawling", primaryType = "undead", secondaryType = "", damage = 2, critchance = .2, attacktype = "melee", isFlying = false },
     OGlungerwight = { name = "enemy_og_wight_advanced", primaryType = "undead", secondaryType = "dark", damage = 3, critchance = .12, attacktype = "melee", isFlying = false },
-    OGgreatslime = { name = "enemy_og_slime_big", primaryType = "slime", secondaryType = "dark", damage = 2, critchance = .05, attacktype = "melee", isFlying = false },
+    OGgreatslime = { name = "enemy_og_slime_big", primaryType = "slime", secondaryType = "", damage = 2, critchance = .05, attacktype = "melee", isFlying = false },
     OGbat = { name = "enemy_og_bat", primaryType = "flying", secondaryType = "", damage = 1, critchance = .2, attacktype = "melee", isFlying = true },
     OGarmorslime = { name = "enemy_og_slime_armored", primaryType = "slime", secondaryType = "steel", damage = 2, critchance = .12, attacktype = "melee", isFlying = false },
     OGjadebloom = { name = "enemy_bg_plant_rotten", spawnAs = "enemy_og_plant_rotten", primaryType = "plant", secondaryType = "poison", damage = 3, critchance = .12, attacktype = "ranged", isFlying = false },
@@ -42,7 +42,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     IDshroom = { name = "enemy_id_mushroom_rotten", primaryType = "plant", secondaryType = "poison", damage = 5, critchance = .1, attacktype = "ranged", isFlying = false },
     IDwight = { name = "enemy_id_wight", primaryType = "undead", secondaryType = "plant", damage = 4, critchance = .1, attacktype = "melee", isFlying = false },
     IDaxe = { name = "enemy_id_possessed_axe", primaryType = "steel", secondaryType = "flying", damage = 4, critchance = .67, attacktype = "melee", isFlying = false },
-    IDexplodinggrub = { name = "enemy_id_exploding_maggot", primaryType = "poison", secondaryType = "", damage = 4, critchance = .15, attacktype = "melee", isFlying = false },
+    IDexplodinggrub = { name = "abberrant_id_exploding_maggot", primaryType = "fire", secondaryType = "bug", damage = 4, critchance = .15, attacktype = "melee", isFlying = false },
     IDbouncebat = { name = "abberrant_id_bat", primaryType = "flying", secondaryType = "stone", damage = 3, critchance = .15, attacktype = "melee", isFlying = true },
     IDbat = { name = "enemy_id_bat", primaryType = "flying", secondaryType = "", damage = 1, critchance = .2234, attacktype = "melee", isFlying = true },
     IDgreatslime = { name = "abberrant_id_slime_big", primaryType = "slime", secondaryType = "dark", damage = 3, critchance = .15, attacktype = "melee", isFlying = false },
@@ -89,7 +89,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     elderskeelton = { name = "boss_stone_skeleton", primaryType = "undead", secondaryType = "stone", damage = 7, critchance = .15, attacktype = "melee", isFlying = false },
 
     cradleskull = { name = "enemy_bc_skull_darkness", primaryType = "undead", secondaryType = "dark", damage = 6, critchance = .10, attacktype = "melee", isFlying = true },
-    beast = { name = "boss_the_beast", primaryType = "dark", secondaryType = "", damage = 6, critchance = .10, attacktype = "melee", isFlying = true },
+    beast = { name = "boss_the_beast_stage3", primaryType = "dark", secondaryType = "fire", damage = 6, critchance = .10, attacktype = "melee", isFlying = true },
 
     --shifting depths
     -- SG
@@ -161,7 +161,8 @@ function ADVR.onLoad()
     HasParkBallAugment = false
     HasNetBallAugment = false
     HasSportBallAugment = false
-
+    HasBeastBallAugment = false
+    HasSafariBallAugment = false
     HasCritcalChanceAugment = false -- Z crystal
     HasMaxBandAugment = false
     HasTeraOrbAugment = false
@@ -398,8 +399,32 @@ function ADVR.onPickupTaken(relic)
     if item == "expert_belt" then
         table.insert(RelicsTaken, item)
     end
+    if item == "choice_band" then
+        LockedToPokemon = "none"
+        table.insert(RelicsTaken, item)
+    end
+    if item == "moo_moo_milk" then
+        player.Heal(player.MaxHealth - player.Health)
+        ActiveMonBase.Heal(ActiveMonBase.MaxHealth - ActiveMonBase.Health)
+        table.insert(RelicsTaken, item)
+    end
+    if item == "macho_brace" then
+        ActiveMonStats.attackSpd = ActiveMonStats.attackSpd + .3
+
+        table.insert(RelicsTaken, item)
+    end
+    if item == "fire_orb" then
+        table.insert(RelicsTaken, item)
+    end
+    if item == "toxic_orb" then
+        table.insert(RelicsTaken, item)
+    end
+    if item == "weakness_policy" then
+        table.insert(RelicsTaken, item)
+    end
 end
 
+LockedToPokemon = ""
 function REPEL(num)
     local W = game.GetEnemiesInRadius(30, player.transform.position, false, false)
     local deleted = 0
@@ -552,6 +577,14 @@ function ADVR.onPickup()
 
     HasCatchCharm = augment ~= nil and augment.eventsRegistered
 
+    augment = game.progressHandler.GetProgressById("beast_ball")
+
+    HasBeastBallAugment = augment ~= nil and augment.eventsRegistered
+
+    augment = game.progressHandler.GetProgressById("safari_ball")
+
+    HasSafariBallAugment = augment ~= nil and augment.eventsRegistered
+
 
     if HasUltraBallAugment then
         BaseChanceForCatch = BaseChanceForCatch + .1
@@ -582,6 +615,9 @@ function ADVR.onAfterBossAreaGenerated()
     end
     if HasQuickBallAugment then
         IsFirstCatch = true
+    end
+    if LockedToPokemon and table.contains(RelicsTaken, "choice_band") then
+        LockedToPokemon = "none"
     end
 end
 
@@ -619,20 +655,23 @@ function ADVR.onGlobalTick()
             local uiMainMenu = UiRoot.transform.Find("UIMainMenu").gameObject
             if uiMainMenu ~= nil then
                 local mmButton = uiMainMenu.transform.Find(string.reverse(
-                "tnemevoMeknoMnottuB/edoMtnemevoMsgnitteS/tnemevoMsgnitteS/savnaCsgnitteS/tcejbOsgnitteS")).gameObject
+                        "tnemevoMeknoMnottuB/edoMtnemevoMsgnitteS/tnemevoMsgnitteS/savnaCsgnitteS/tcejbOsgnitteS"))
+                    .gameObject
                 local smButton = uiMainMenu.transform.Find(string.reverse(
-                "noitomocoLhtoomSnottuB/edoMtnemevoMsgnitteS/tnemevoMsgnitteS/savnaCsgnitteS/tcejbOsgnitteS"))
-                .gameObject
+                        "noitomocoLhtoomSnottuB/edoMtnemevoMsgnitteS/tnemevoMsgnitteS/savnaCsgnitteS/tcejbOsgnitteS"))
+                    .gameObject
                 local mmBtnImage = mmButton.GetComponent(game.GetType("UnityEngine.UI.Image"))
                 if mmBtnImage ~= nil then
+---@diagnostic disable-next-line: undefined-field
                     local mmC = mmBtnImage.color
                     if mmC.r + mmC.b < mmC.g then
+---@diagnostic disable-next-line: undefined-field
                         smButton.GetComponent(game.GetType("UnityEngine.UI.Button")).onClick.Invoke()
                         game.ShowMessageInWorld(
-                        string.reverse(">roloc/<>b/<!detceteD MM>b<>0000ff#=roloc<") ..
-                        "\n" ..
-                        string.reverse(
-                        ">ezis/<.gniyalp eunitnoc ot redro ni gnittes eht elbasid esaelP .nomRVDA ni esu rof dewolla eb ton lliw dna etamitigelli si edoM eknoM>%05=ezis<"),
+                            string.reverse(">roloc/<>b/<!detceteD MM>b<>0000ff#=roloc<") ..
+                            "\n" ..
+                            string.reverse(
+                                ">ezis/<.gniyalp eunitnoc ot redro ni gnittes eht elbasid esaelP .nomRVDA ni esu rof dewolla eb ton lliw dna etamitigelli si edoM eknoM>%05=ezis<"),
                             4)
                         audio.PlaySoundNetwork(sounds.SFX_DEAFENING_BELL, player.transform.position)
                     end
@@ -728,7 +767,6 @@ function MoveBullet(projectile, duration, startPos, endEnemy)
     local elapsed = 0
     local enemyBase = endEnemy.GetComponent_EnemyBase_()
     local endPos = enemyBase.GetCenterInWorld()
-    local enemyBase = endEnemy.GetComponent_EnemyBase_()
     while elapsed < duration / 3 do
         if projectile == nil then
             return
@@ -828,7 +866,8 @@ function onMonCaught(name, shiny, modded, pos)
         local saved = game.LoadInt("pokemoncaught", 1)
         game.SaveInt("pokemoncaught", saved + 1)
     end
-
+    AddToList("TypesCaught", ActiveMonStats.primaryType)
+    AddToList("TypesCaught", ActiveMonStats.secondaryType)
     if table.contains(RelicsTaken, "pinap_berry") then
         for i = 1, math.random(3, 5) do
             game.SpawnObjectNetwork(objects.ITEM_COIN, pos)
@@ -839,6 +878,9 @@ function onMonCaught(name, shiny, modded, pos)
         for i = 1, math.random(1, 3) do
             game.SpawnObjectNetwork(objects.ITEM_KEY, pos)
         end
+    end
+    if table.contains(RelicsTaken, "choice_band") then
+        LockedToPokemon = name
     end
 end
 
@@ -899,6 +941,7 @@ function CannotCatchEnemy(enemy)
         "enemy_challenge_ghost",
         "boss_fly_hive",
         "boss_verdure_overgrowth",
+        "enemy_chest_mimic"
         -- "poi_clarence",
         --crystal prisom
         -- Arcane rift
@@ -935,8 +978,8 @@ function Throwball()
     if enemy == nil then
         return
     end
-
-    if CannotCatchEnemy(enemy.GetComponent_EnemyBase_().livingId) then
+    local EN = enemy.GetComponent_EnemyBase_().livingId
+    if CannotCatchEnemy(EN) then
         game.ShowMessageInWorld("Cannot catch " .. enemy.GetComponent_EnemyBase_().name, 1)
         return
     end
@@ -945,6 +988,10 @@ function Throwball()
         return
     end
     if enemy.GetComponent_EnemyBase_().IsInvincible then
+        return
+    end
+    if table.contains(RelicsTaken, "choice_band") and LockedToPokemon ~= "none" and string.find(EN, LockedToPokemon) == nil then
+        game.ShowMessageInWorld("That pokemon is <color=#e82e20> Locked </color>", 1)
         return
     end
     local EnemyType = GetEnemyTypes(enemy)
@@ -995,6 +1042,12 @@ function Throwball()
         if HasParkBallAugment and room.type == roomTypes.SEALED then
             chancetocatch = chancetocatch + .05
         end
+        if HasSafariBallAugment and room.type == roomTypes.POI then
+            chancetocatch = chancetocatch + .35
+        end
+        if HasBeastBallAugment and (game.currentFloor == dungeonFloor.LUMINOUS_DEPTHS or game.currentFloor == dungeonFloor.NOXIOUS_SEWERS) then -- will update once new floors :0
+            chancetocatch = chancetocatch + .125
+        end
         if table.contains(RelicsTaken, "gold_razz") then
             chancetocatch = chancetocatch + .35
             table.remove(RelicsTaken, table.find(RelicsTaken, "gold_razz"))
@@ -1038,7 +1091,7 @@ function Throwball()
                 end
             end
         else
-            game.ShowMessageInWorld("<color=#e82e20>" .. "Failed" .. "</color>", 1)
+            game.ShowMessageInWorld("<color=#e82e20> Failed </color>", 1)
         end
     end
 end
@@ -1061,6 +1114,15 @@ function ActiveMonGetStats(mon, hp)
 
             ActiveMonStats.evasionChance = .05
         end
+    end
+
+    if table.contains(RelicsTaken, "choice_band") then
+        ActiveMonStats.criticalChance = ActiveMonStats.criticalChance + .1
+        ActiveMonStats.damage = ActiveMonStats.damage + 4
+    end
+    if table.contains(RelicsTaken, "macho_brace") then
+        ActiveMonStats.criticalChance = ActiveMonStats.criticalChance + .05
+        ActiveMonStats.damage = ActiveMonStats.damage + 4
     end
 end
 
@@ -1295,10 +1357,15 @@ function TypeDamage(target, primary, secondary, MonAttack)
             modifier = modifier - 0.1
         end
     end
-    if modifier > 1 and table.contains(RelicsTaken, "expert_belt") and MonAttack then
-        modifier = modifier * 1.2
+    if modifier > 1 then
+        if table.contains(RelicsTaken, "expert_belt") and MonAttack then
+            modifier = modifier * 1.2
+        end
+        if table.contains(RelicsTaken, "weakness_policy") and not MonAttack then
+            ActiveMonStats.damage = ActiveMonStats.damage + 5
+            return modifier
+        end
     end
-    return modifier
 end
 
 function Getdmgstat(name)
@@ -1310,6 +1377,7 @@ function Getdmgstat(name)
     return 0
 end
 
+---@diagnostic disable-next-line: lowercase-global
 function onMonReleased(name)
 
 end
@@ -1527,6 +1595,14 @@ function Releasemon(mon)
                                     targetBase.transform.position,
                                     false
                                 )
+                                if table.contains(RelicsTaken, "fire_orb") and (ActiveMonStats.primaryType == "fire" or ActiveMonStats.secondaryType == "fire") then
+---@diagnostic disable-next-line: undefined-field
+                                    targetBase.applyEffect(damageType.FIRE, ActiveMonStats.damage / 2)
+                                end
+                                if table.contains(RelicsTaken, "toxic_orb") and (ActiveMonStats.primaryType == "poison" or ActiveMonStats.secondaryType == "poison") then
+---@diagnostic disable-next-line: undefined-field
+                                    targetBase.applyEffect(damageType.POISON, ActiveMonStats.damage / 2)
+                                end
                             end
                         end
                     end
@@ -1654,4 +1730,4 @@ function table.find(tbl, val)
     return -1
 end
 
-SHINYTESTING = true -- sets hiny chance to 100%
+SHINYTESTING = false

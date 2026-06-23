@@ -3,7 +3,7 @@ function ADVR.onLoad()
     pickup.desc = "An item to be held by a Pokémon. It's an old deer skull that boosts the power of the holder's <color=#59310b>Undead</color>-type attacks."
 	pickup.weight = 110
 	pickup.tier = 1
-	pickup.maxAmount = 10
+	pickup.maxAmount = 1
 	pickup.amountUses = -1
 	pickup.price = 10
 	pickup.spawnsIn = {relicPool.SACRIFICE, relicPool.SHOP, relicPool.SECRET}
