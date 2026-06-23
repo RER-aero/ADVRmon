@@ -1014,8 +1014,8 @@ function Throwball()
         if HasSlimeBallAugment and (EnemyType.primary == "slime" or EnemyType.secondary == "slime") then
             chancetocatch = chancetocatch + .075
         end
-        if HasHeavyBallAugment and (EnemyType.primary == "stone" or EnemyType.secondary == "stone") then
-            chancetocatch = chancetocatch + .075
+        if HasHeavyBallAugment and (EnemyType.primary == "stone" or EnemyType.secondary == "stone") or (EnemyType.primary == "steel" or EnemyType.secondary == "steel") then
+            chancetocatch = chancetocatch + .085
         end
         if HasFeatherBallAugment and (EnemyType.primary == "flying" or EnemyType.secondary == "flying") then
             chancetocatch = chancetocatch + .075
