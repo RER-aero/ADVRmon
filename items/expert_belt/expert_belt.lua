@@ -1,5 +1,5 @@
 function ADVR.onLoad()
-    pickup.name = "Expert Belth"
+    pickup.name = "Expert Belt"
     pickup.desc = "An item to be held by a Pokémon. It's a well-worn belt that slightly boosts the power of the holder's supereffective moves. "
 	pickup.weight = 80
 	pickup.tier = 1
