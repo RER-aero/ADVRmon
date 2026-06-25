@@ -163,6 +163,7 @@ function ADVR.onLoad()
     HasSportBallAugment = false
     HasBeastBallAugment = false
     HasSafariBallAugment = false
+    HasLevelBallAugment = false
 
     HasCritcalChanceAugment = false -- Z crystal
     HasMaxBandAugment = false
@@ -586,6 +587,9 @@ function ADVR.onPickup()
 
     HasSafariBallAugment = augment ~= nil and augment.eventsRegistered
 
+    augment = game.progressHandler.GetProgressById("level_ball")
+
+    HasLevelBallAugment = augment ~= nil and augment.eventsRegistered
 
     if HasUltraBallAugment then
         BaseChanceForCatch = BaseChanceForCatch + .1
@@ -599,7 +603,7 @@ function ADVR.onPickup()
     if HasShinyCharmAugment then
         BaseShinyChance = BaseShinyChance * 2
     end
-    
+
     if SHINYTESTING then
         BaseShinyChance = 100
     end
@@ -664,10 +668,10 @@ function ADVR.onGlobalTick()
                     .gameObject
                 local mmBtnImage = mmButton.GetComponent(game.GetType("UnityEngine.UI.Image"))
                 if mmBtnImage ~= nil then
----@diagnostic disable-next-line: undefined-field
+                    ---@diagnostic disable-next-line: undefined-field
                     local mmC = mmBtnImage.color
                     if mmC.r + mmC.b < mmC.g then
----@diagnostic disable-next-line: undefined-field
+                        ---@diagnostic disable-next-line: undefined-field
                         smButton.GetComponent(game.GetType("UnityEngine.UI.Button")).onClick.Invoke()
                         game.ShowMessageInWorld(
                             string.reverse(">roloc/<>b/<!detceteD MM>b<>0000ff#=roloc<") ..
@@ -945,7 +949,7 @@ function CannotCatchEnemy(enemy)
         -- "poi_clarence",
         --crystal prisom
         -- Arcane rift
-        --
+        
     }
     -- wisps cannot be shiny!!!
 
@@ -1025,6 +1029,9 @@ function Throwball()
         end
         if HasGuckBallAugment and (EnemyType.primary == "poison" or EnemyType.secondary == "poison") then
             chancetocatch = chancetocatch + .075
+        end
+         if HasLevelBallAugment and ActiveMon ~= nil and GetFloorOfPokemonByNumber(ActiveMon) < GetFloorOfPokemonByNumber(enemy.GetComponent_EnemyBase_().livingId) then
+            chancetocatch = chancetocatch + .1
         end
         local anim = enemy.GetComponent_Animator_()
         if HasDreamBallAugment and anim ~= nil and anim.speed == 0 then
@@ -1597,11 +1604,11 @@ function Releasemon(mon)
                                     false
                                 )
                                 if table.contains(RelicsTaken, "fire_orb") and (ActiveMonStats.primaryType == "fire" or ActiveMonStats.secondaryType == "fire") then
----@diagnostic disable-next-line: undefined-field
+                                    ---@diagnostic disable-next-line: undefined-field
                                     targetBase.applyEffect(damageType.FIRE, ActiveMonStats.damage / 2)
                                 end
                                 if table.contains(RelicsTaken, "toxic_orb") and (ActiveMonStats.primaryType == "poison" or ActiveMonStats.secondaryType == "poison") then
----@diagnostic disable-next-line: undefined-field
+                                    ---@diagnostic disable-next-line: undefined-field
                                     targetBase.applyEffect(damageType.POISON, ActiveMonStats.damage / 2)
                                 end
                             end
@@ -1711,6 +1718,25 @@ function GetClosestEnemyWithExcludes(Radius, Pos, onlyVisible, excludeInvincible
     end
 
     return closestEnemy
+end
+
+function GetFloorOfPokemonByNumber(name)
+    if string.find(name, "og") or string.find(name, "bg") or string.find(name, "sg")  then
+        return 1
+    end
+    if string.find(name, "id") or string.find(name, "ns") then
+        return 2
+    end
+    if string.find(name, "fg") or string.find(name, "pc") then
+        return 3
+    end
+    if string.find(name, "ld") or string.find(name, "gm") then
+        return 4
+    end
+    if string.find(name, "bc") then
+        return 5
+    end
+    return 0
 end
 
 function table.contains(tbl, val)
