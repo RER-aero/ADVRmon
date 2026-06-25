@@ -34,7 +34,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     mask = { name = "enemy_shopkeeper_corrupted_mask", primaryType = "dark", secondaryType = "flying", damage = 0, critchance = 0, attacktype = "melee", isFlying = false },
 
 
-    doomshroom = { name = "boss_mushroom", spawnAs = "boss_doomshroom", primaryType = "poison", secondaryType = "plant", damage = 5, critchance = .31, attacktype = "melee", isFlying = false },
+    doomshroom = { name = "boss_doomshroom", spawnAs = "boss_mushroom", primaryType = "poison", secondaryType = "plant", damage = 5, critchance = .31, attacktype = "melee", isFlying = false },
     IDgobslime = { name = "enemy_id_slime_bullet", primaryType = "slime", secondaryType = "plant", damage = 3, critchance = .15, attacktype = "ranged", isFlying = false },
     IDgoosack = { name = "enemy_id_goo_exploding", primaryType = "poison", secondaryType = "fire", damage = 3, critchance = .15, attacktype = "melee", isFlying = false },
     IDslime = { name = "enemy_id_slime", primaryType = "slime", secondaryType = "poison", damage = 4, critchance = .11, attacktype = "melee", isFlying = false },
@@ -114,14 +114,14 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     PCslime = { name = "enemy_pc_slime", spawnAs = "enemy_fg_slime_phase", primaryType = "slime", secondaryType = "crystal", damage = 5, critchance = .12, attacktype = "melee", isFlying = false },
     PCcuringtome = { name = "enemy_pc_curing_tome", spawnAs = "enemy_invincibility_tome", primaryType = "magic", secondaryType = "crystal", damage = 0, critchance = 0, attacktype = "melee", isFlying = false },
     PClome = { name = "enemy_pc_book_lightning", spawnAs = "enemy_fg_book_exploding", primaryType = "magic", secondaryType = "fire", damage = 10, critchance = .2, attacktype = "melee", isFlying = false },
-    PCrotti = { name = "enemy_pc_rotating_beam", spawnAs = "enemy_fg_targeting_beam", primaryType = "magic", secondaryType = "", damage = 4, critchance = .1, attacktype = "ranged", isFlying = false },
+    PCrotti = { name = "enemy_pc_rotating_beam", spawnAs = "enemy_ld_rotatingbeam", primaryType = "crystal", secondaryType = "magic", damage = 4, critchance = .1, attacktype = "ranged", isFlying = false },
     PCdisciple = { name = "enemy_pc_wight", spawnAs = "enemy_og_wight", primaryType = "undead", secondaryType = "magic", damage = 6, critchance = .15, attacktype = "melee", isFlying = false },
     PCpale = { name = "enemy_pc_wisp_fly", spawnAs = "enemy_fg_wisp", primaryType = "magic", secondaryType = "flying", damage = 7, critchance = .15, attacktype = "melee", isFlying = true },
     PCbigwisp = { name = "enemy_pc_wisp_big", spawnAs = "enemy_fg_wisp", primaryType = "magic", secondaryType = "flying", damage = 5, critchance = .12, attacktype = "melee", isFlying = true },
     PCdemonslime = { name = "abberrant_pc_slime", spawnAs = "enemy_fg_slime_phase", primaryType = "slime", secondaryType = "dark", damage = 7, critchance = .02, attacktype = "melee", isFlying = false },
     PCcoral = { name = "abberrant_pc_wisp_fly", spawnAs = "enemy_fg_wisp", primaryType = "magic", secondaryType = "flying", damage = 5, critchance = .2, attacktype = "melee", isFlying = true },
     PCprofanewiusp = { name = "abberrant_pc_wisp_big", spawnAs = "enemy_fg_wisp", primaryType = "magic", secondaryType = "dark", damage = 7, critchance = .2, attacktype = "melee", isFlying = true },
-    PCdevilpris = { name = "abberrant_pc_rotating_beam", spawnAs = "enemy_fg_targeting_beam", primaryType = "magic", secondaryType = "dark", damage = 6, critchance = .1, attacktype = "ranged", isFlying = false },
+    PCdevilpris = { name = "abberrant_pc_rotating_beam", spawnAs = "enemy_ld_rotatingbeam", primaryType = "crystal", secondaryType = "dark", damage = 6, critchance = .1, attacktype = "ranged", isFlying = false },
     PCstupidfuckingtome = { name = "abberrant_pc_curing_tome", spawnAs = "enemy_invincibility_tome", primaryType = "magic", secondaryType = "crystal", damage = 0, critchance = 0, attacktype = "melee", isFlying = false },
 
 
@@ -134,7 +134,7 @@ function ADVR.onLoad()
     pickup.tier = 1
     pickup.maxAmount = 1
     pickup.amountUses = 1
-    pickup.price = 15
+    pickup.price = 999
     pickup.spawnsIn = {}
     pickup.isActivateItem = true
     pickup.supportedInMultiplayer = true
@@ -163,6 +163,7 @@ function ADVR.onLoad()
     HasSportBallAugment = false
     HasBeastBallAugment = false
     HasSafariBallAugment = false
+
     HasCritcalChanceAugment = false -- Z crystal
     HasMaxBandAugment = false
     HasTeraOrbAugment = false
@@ -598,6 +599,7 @@ function ADVR.onPickup()
     if HasShinyCharmAugment then
         BaseShinyChance = BaseShinyChance * 2
     end
+    
     if SHINYTESTING then
         BaseShinyChance = 100
     end
@@ -808,7 +810,7 @@ function MoveBullet(projectile, duration, startPos, endEnemy)
         local abr = string.match(tostring(ActiveMon), "abberrant")
         local modded = string.match(tostring(ActiveMon), "pc") or string.match(tostring(ActiveMon), "sg")
         onMonCaught(ActiveMon, ActiveMonStats.isShiny, modded, endPos)
-        game.Delete(endEnemy.gameObject)
+        enemyBase.DoHit(player.networkObject, 999)
         game.Delete(projectile)
         game.itemInterpreter.currentUsable.currentCharge = game.itemInterpreter.currentUsable.amountUses
         game.activePickupSlot.UpdateChargeDisplay()
@@ -935,12 +937,10 @@ end
 function CannotCatchEnemy(enemy)
     local Unable = {
         "enemy_id_goo_exploding",
-        "boss_the_beast",
-        "enemy_shopkeeper_corrupted_mask",
+        "boss_the_beast_stage3",
         "enemy_ns_fly_hive",
         "enemy_challenge_ghost",
         "boss_fly_hive",
-        "boss_verdure_overgrowth",
         "enemy_chest_mimic"
         -- "poi_clarence",
         --crystal prisom
@@ -1001,7 +1001,7 @@ function Throwball()
         return
     end
     if enemy ~= nil then
-        local chancetocatch = BaseChanceForCatch
+        local chancetocatch = BaseChanceForCatch -- 35%
         if bestiary.GetKillCount(enemy.GetComponent_EnemyBase_().livingId) > 0 and HasRepeatBallAugment then
             chancetocatch = chancetocatch + .05
         end
@@ -1027,7 +1027,7 @@ function Throwball()
             chancetocatch = chancetocatch + .075
         end
         local anim = enemy.GetComponent_Animator_()
-        if HasDreamBallAugment and anim.speed == 0 then
+        if HasDreamBallAugment and anim ~= nil and anim.speed == 0 then
             chancetocatch = chancetocatch + .1
         end
         if HasLuxuryBallAugment then
@@ -1366,6 +1366,7 @@ function TypeDamage(target, primary, secondary, MonAttack)
             return modifier
         end
     end
+    return modifier
 end
 
 function Getdmgstat(name)
