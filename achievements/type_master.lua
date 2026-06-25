@@ -10,8 +10,9 @@ function ADVR.onLoad()
 end
 
 
-function ADVR.onSpawnInHomeBase()
-    if HasCaughtEveything() == true then
+function ADVR.onPlayerDeathOrRunComplete()
+     local collected = GetList("TypesCaught")
+    if #collected == 12 then
         achievement.Unlock()
     end
 end
