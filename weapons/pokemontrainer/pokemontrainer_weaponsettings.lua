@@ -4,8 +4,8 @@
 
 function ADVR.onLoad()
     combo.comboName = "Pokemon Trainer"
-    combo.primaryWeaponName = "Pokemon"
-    combo.secondaryWeaponName = "Pokeball"
+    combo.primaryWeaponName = "Dagger"
+    combo.secondaryWeaponName = "Knife"
     combo.primaryWeapon = game.stringToObjectMapper.GetObject("weapon_player_dagger")
     combo.secondaryWeapon = game.stringToObjectMapper.GetObject("weapon_player_throwing_knife")
     combo.orderInUI = 151
