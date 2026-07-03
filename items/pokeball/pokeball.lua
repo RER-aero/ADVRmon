@@ -74,12 +74,12 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     LDroofplanbt = { name = "enemy_ld_sentryplant", primaryType = "plant", secondaryType = "crystal", damage = 4, critchance = .45, attacktype = "ranged", isFlying = false },
     LDelemental = { name = "enemy_ld_crystal_elemental", primaryType = "crystal", secondaryType = "stone", damage = 7, critchance = .15, attacktype = "ranged", isFlying = false },
     LDslime = { name = "enemy_ld_slime_crystal", primaryType = "slime", secondaryType = "crystal", damage = 6, critchance = .15, attacktype = "melee", isFlying = false },
-    LDgreatslime = { name = "enemy_ld_fat_slime_crystal", primaryType = "crystal", secondaryType = "slime", damage = 7, critchance = .1, attacktype = "melee", isFlying = false },
+    LDgreatslime = { name = "enemy_ld_fat_crystal_slime", spawnAs = "enemy_ld_fat_slime_crystal", primaryType = "crystal", secondaryType = "slime", damage = 7, critchance = .1, attacktype = "melee", isFlying = false },
     LDskeleton = { name = "enemy_ld_skeleton", spawnAs = "enemy_ld_skeleton_crystal", primaryType = "undead", secondaryType = "crystal", damage = 8, critchance = .05, attacktype = "melee", isFlying = false },
     LDskull = { name = "enemy_ld_possessed_skull", primaryType = "undead", secondaryType = "crystal", damage = 5, critchance = .25, attacktype = "melee", isFlying = true },
     LDprism = { name = "enemy_ld_rotatingbeam", primaryType = "crystal", secondaryType = "magic", damage = 4, critchance = .35, attacktype = "ranged", isFlying = true },
 
-    GMelemental = { name = "enemy_gm_crystal_elemental", primaryType = "stone", secondaryType = "magic", damage = 7, critchance = .15, attacktype = "ranged", isFlying = false },
+    GMelemental = { name = "enemy_gm_rock_elemental", spawnAs = "enemy_gm_crystal_elemental", primaryType = "stone", secondaryType = "magic", damage = 7, critchance = .15, attacktype = "ranged", isFlying = false },
     GMglobvurtser = { name = "enemy_gm_slime_bone", primaryType = "slime", secondaryType = "stone", damage = 6, critchance = .15, attacktype = "melee", isFlying = false },
     GMspikeslime = { name = "enemy_gm_slime_stone", primaryType = "stone", secondaryType = "dark", damage = 8, critchance = .01, attacktype = "melee", isFlying = false },
     GMskeleton = { name = "enemy_gm_skeleton", primaryType = "undead", secondaryType = "dark", damage = 7, critchance = .10, attacktype = "melee", isFlying = false },
@@ -215,7 +215,6 @@ function ADVR.onPostObjectSpawn(prefab, object)
             CreateShiny(object)
             return
         end
-    else
         return
     end
 
@@ -1788,4 +1787,4 @@ function table.find(tbl, val)
     return -1
 end
 
-SHINYTESTING = true
+SHINYTESTING = false
