@@ -4,11 +4,11 @@
 
 -- If you are here because you are curious on how it works, let me know when you figure it out because im curious too
 
-TESTING = false --enables stuff like showing which relic youve picked up
+TESTING = false --enables stuff like showing which relic you've picked up
 
 local ActiveSummons = {}
 local FunctionOnRepeat = nil
-StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, stone, crystal, dark, flying, fire, steel
+StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, stone, crystal, dark, flying, fire, steel, bug
     OGslime = { name = "enemy_og_slime", primaryType = "slime", secondaryType = "", damage = 2, critchance = .1, attacktype = "melee", isFlying = false },
     OGgobslime = { name = "enemy_og_slime_bullet", primaryType = "slime", secondaryType = "", damage = 1, critchance = .12, attacktype = "ranged", isFlying = false },
     OGscarletbloom = { name = "enemy_og_plant_4x", primaryType = "plant", secondaryType = "", damage = 2, critchance = .1, attacktype = "ranged", isFlying = false },
@@ -30,7 +30,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     goldslime = { name = "enemy_slime_golden", spawnAs = "enemy_golden_slime", primaryType = "slime", secondaryType = "steel", damage = 4, critchance = .1, attacktype = "melee", isFlying = false },
     mimc = { name = "enemy_chest_mimic", spawnAs = "enemy_mimic", primaryType = "dark", secondaryType = "stone", damage = 6, critchance = .01, attacktype = "melee", isFlying = false },
     invincibletome = { name = "enemy_invincibility_tome", primaryType = "magic", secondaryType = "", damage = 0, critchance = 0, attacktype = "melee", isFlying = false },
-    shopguy = { name = "enemy_corrupted_shopkeeper", primaryType = "dark", secondaryType = "magic", damage = 8, critchance = 0, attacktype = "melee", isFlying = false },
+    shopguy = { name = "enemy_corrupted_shopkeeper", primaryType = "dark", secondaryType = "magic", damage = 8, critchance = 0, attacktype = "ranged", isFlying = false },
     mask = { name = "enemy_shopkeeper_corrupted_mask", primaryType = "dark", secondaryType = "flying", damage = 0, critchance = 0, attacktype = "melee", isFlying = false },
 
 
@@ -63,7 +63,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     FGzipslime = { name = "enemy_fg_slime_phase", primaryType = "slime", secondaryType = "magic", damage = 5, critchance = .12, attacktype = "melee", isFlying = false },
     FGwisp = { name = "enemy_fg_wisp", primaryType = "magic", secondaryType = "flying", damage = 8, critchance = .041, attacktype = "melee", isFlying = true },
     FGelemental = { name = "enemy_fg_elemental_magic", primaryType = "crystal", secondaryType = "magic", damage = 6, critchance = .1, attacktype = "ranged", isFlying = false },
-    FGarmor = { name = "enemy_fg_possesed_armor", primaryType = "steel", secondaryType = "dark", damage = 7, critchance = .2, attacktype = "melee", isFlying = false },
+    FGarmor = { name = "enemy_fg_possessed_armor", primaryType = "steel", secondaryType = "dark", damage = 7, critchance = .2, attacktype = "melee", isFlying = false },
     FGprism = { name = "enemy_fg_targeting_beam", primaryType = "crystal", secondaryType = "", damage = 4, critchance = .12, attacktype = "ranged", isFlying = false },
     FGbloodbook = { name = "abberrant_fg_book", primaryType = "magic", secondaryType = "dark", damage = 5, critchance = .12, attacktype = "ranged", isFlying = false },
     FGorangezip = { name = "abberrant_fg_slime_phase", primaryType = "slime", secondaryType = "fire", damage = 6, critchance = .182, attacktype = "melee", isFlying = false },
@@ -77,7 +77,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     LDgreatslime = { name = "enemy_ld_fat_slime_crystal", primaryType = "crystal", secondaryType = "slime", damage = 7, critchance = .1, attacktype = "melee", isFlying = false },
     LDskeleton = { name = "enemy_ld_skeleton", spawnAs = "enemy_ld_skeleton_crystal", primaryType = "undead", secondaryType = "crystal", damage = 8, critchance = .05, attacktype = "melee", isFlying = false },
     LDskull = { name = "enemy_ld_possessed_skull", primaryType = "undead", secondaryType = "crystal", damage = 5, critchance = .25, attacktype = "melee", isFlying = true },
-    LDprism = { name = "enemy_ld_rotating_beam", primaryType = "crystal", secondaryType = "magic", damage = 4, critchance = .35, attacktype = "ranged", isFlying = true },
+    LDprism = { name = "enemy_ld_rotatingbeam", primaryType = "crystal", secondaryType = "magic", damage = 4, critchance = .35, attacktype = "ranged", isFlying = true },
 
     GMelemental = { name = "enemy_gm_crystal_elemental", primaryType = "stone", secondaryType = "magic", damage = 7, critchance = .15, attacktype = "ranged", isFlying = false },
     GMglobvurtser = { name = "enemy_gm_slime_bone", primaryType = "slime", secondaryType = "stone", damage = 6, critchance = .15, attacktype = "melee", isFlying = false },
@@ -126,6 +126,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
 
 
 }
+local StatSheetOrigin = StatSheet
 
 function ADVR.onLoad()
     pickup.name = "Pokeball"
@@ -164,6 +165,7 @@ function ADVR.onLoad()
     HasBeastBallAugment = false
     HasSafariBallAugment = false
     HasLevelBallAugment = false
+    HasCherishBallAugment = false
 
     HasCritcalChanceAugment = false -- Z crystal
     HasMaxBandAugment = false
@@ -208,8 +210,12 @@ function ADVR.onPostObjectSpawn(prefab, object)
     local enemyBase = object.GetComponent_EnemyBase_()
     if enemyBase == nil then return end
 
-    if object == ActiveMonObj and ActiveMonStats.isShiny then
-        CreateShiny(object)
+    if object == ActiveMonObj then
+        if ActiveMonStats.isShiny then
+            CreateShiny(object)
+            return
+        end
+    else
         return
     end
 
@@ -435,7 +441,7 @@ function REPEL(num)
         attempts = attempts + 1
         local victim = W[math.random(1, #W)].gameObject
         if victim ~= ActiveMonObj then
-            game.Delete(victim, false)
+            victim.DoHit(player.networkobject, 999)
             deleted = deleted + 1
         end
     end
@@ -591,6 +597,10 @@ function ADVR.onPickup()
 
     HasLevelBallAugment = augment ~= nil and augment.eventsRegistered
 
+    augment = game.progressHandler.GetProgressById("cherish_ball")
+
+    HasCherishBallAugment = augment ~= nil and augment.eventsRegistered
+
     if HasUltraBallAugment then
         BaseChanceForCatch = BaseChanceForCatch + .1
     end
@@ -739,7 +749,6 @@ function RecallBullet(projectile, duration, startPos, friendObj)
         coroutine.yield()
     end
 
-    -- orb has reached the mon — clean everything up
     if projectile ~= nil then
         game.Delete(projectile)
     end
@@ -814,7 +823,11 @@ function MoveBullet(projectile, duration, startPos, endEnemy)
         local abr = string.match(tostring(ActiveMon), "abberrant")
         local modded = string.match(tostring(ActiveMon), "pc") or string.match(tostring(ActiveMon), "sg")
         onMonCaught(ActiveMon, ActiveMonStats.isShiny, modded, endPos)
-        enemyBase.DoHit(player.networkObject, 999)
+        if string.find(enemyBase.livingId, "boss") or game.IsInArenaMode() then
+            enemyBase.DoHit(player.networkObject, 999)
+        else
+            game.Delete(endEnemy.gameObject)
+        end
         game.Delete(projectile)
         game.itemInterpreter.currentUsable.currentCharge = game.itemInterpreter.currentUsable.amountUses
         game.activePickupSlot.UpdateChargeDisplay()
@@ -845,9 +858,9 @@ function AddToList(key, name)
     game.SaveString(key, table.concat(list, DELIMITER))
 end
 
----@diagnostic disable-next-line: lowercase-global
 function onMonCaught(name, shiny, modded, pos)
     PokemonCaughtThisRun = PokemonCaughtThisRun + 1
+    CatchStreak = CatchStreak + 1
     local HS = game.LoadInt("HighScorePokemonCaught", 0)
     if HS < PokemonCaughtThisRun then
         game.SaveInt("HighScorePokemonCaught", PokemonCaughtThisRun)
@@ -945,11 +958,12 @@ function CannotCatchEnemy(enemy)
         "enemy_ns_fly_hive",
         "enemy_challenge_ghost",
         "boss_fly_hive",
-        "enemy_chest_mimic"
+        "enemy_chest_mimic",
+        "enemy_corrupted_shopkeeper"
         -- "poi_clarence",
         --crystal prisom
         -- Arcane rift
-        
+
     }
     -- wisps cannot be shiny!!!
 
@@ -961,6 +975,7 @@ function CannotCatchEnemy(enemy)
     return false
 end
 
+CatchStreak = 0
 function Throwball()
     local enemies = game.GetEnemiesInRadius(10, game.playerController.rightHand.transform.position, false, true)
     if #enemies == 0 then
@@ -1005,8 +1020,22 @@ function Throwball()
         return
     end
     if enemy ~= nil then
+        local shinyenemy = false
+        local renderers = enemy.GetComponent_EnemyBase_().gameObject.GetComponentsInChildren(game.GetType("MeshRenderer"))
+        if renderers ~= nil and renderers.Length > 0 then
+            local color = renderers[0].material.color
+            if math.abs(color.r - 0.565) < 0.01 and math.abs(color.g - 0.69) < 0.01 then
+                local shinyenemy = true
+            end
+        end
         local chancetocatch = BaseChanceForCatch -- 35%
-        if bestiary.GetKillCount(enemy.GetComponent_EnemyBase_().livingId) > 0 and HasRepeatBallAugment then
+        if HasCherishBallAugment and shinyenemy then
+            chancetocatch = 1
+        end
+        if table.contains(GetList("EnemiesCaught"), enemy.GetComponent_EnemyBase_().livingId) and HasRepeatBallAugment then
+            chancetocatch = chancetocatch + .05
+        end
+        if table.contains(GetList("ModdedEnemiesCaught"), enemy.GetComponent_EnemyBase_().livingId) and HasRepeatBallAugment then
             chancetocatch = chancetocatch + .05
         end
         if HasDuskBallAugment and (EnemyType.primary == "dark" or EnemyType.secondary == "dark") then
@@ -1030,7 +1059,7 @@ function Throwball()
         if HasGuckBallAugment and (EnemyType.primary == "poison" or EnemyType.secondary == "poison") then
             chancetocatch = chancetocatch + .075
         end
-         if HasLevelBallAugment and ActiveMon ~= nil and GetFloorOfPokemonByNumber(ActiveMon) < GetFloorOfPokemonByNumber(enemy.GetComponent_EnemyBase_().livingId) then
+        if HasLevelBallAugment and ActiveMon ~= nil and GetFloorOfPokemonByNumber(ActiveMon) < GetFloorOfPokemonByNumber(enemy.GetComponent_EnemyBase_().livingId) then
             chancetocatch = chancetocatch + .1
         end
         local anim = enemy.GetComponent_Animator_()
@@ -1098,6 +1127,10 @@ function Throwball()
                 end
             end
         else
+            if game.LoadInt("HighestStreak", 0) < CatchStreak then
+                game.SaveInt("HighestStreak", CatchStreak)
+            end
+            CatchStreak = 0
             game.ShowMessageInWorld("<color=#e82e20> Failed </color>", 1)
         end
     end
@@ -1188,6 +1221,7 @@ function CalcDamage(enemy)
     if HasCritcalChanceAugment and math.random(3) == 1 then
         damage = damage * 1.5
     end
+
     return math.ceil(damage)
 end
 
@@ -1230,7 +1264,7 @@ function TypeDamage(target, primary, secondary, MonAttack)
             modifier = modifier - 0.22
         end
         if EnemyPrimaryType == "dark" or EnemySecondaryType == "dark" then
-            modifier = modifier - 0.03
+            modifier = modifier - 0.13
         end
     end
     if primary == "poison" or secondary == "poison" then
@@ -1355,7 +1389,7 @@ function TypeDamage(target, primary, secondary, MonAttack)
             modifier = modifier + 0.22
         end
         if EnemyPrimaryType == "dark" or EnemySecondaryType == "dark" then
-            modifier = modifier + 0.1
+            modifier = modifier + 0.2
         end
         if EnemyPrimaryType == "stone" or EnemySecondaryType == "stone" then
             modifier = modifier - 0.1
@@ -1376,8 +1410,8 @@ function TypeDamage(target, primary, secondary, MonAttack)
     return modifier
 end
 
-function Getdmgstat(name)
-    for _, block in pairs(StatSheet) do
+function GetEnemydmgstat(name)
+    for _, block in pairs(StatSheetOrigin) do
         if name == block.name then
             return block.damage
         end
@@ -1427,13 +1461,13 @@ function Releasemon(mon)
                 end
             end
             local mult = 1.5
-            if math.random(10000) == 1 then
+            if math.random(1000) == 1 then
                 mult = 5
             end
             ActiveMonObj.GetComponent_Transform_().localScale = ActiveMonObj.GetComponent_Transform_().localScale * mult
         end
         if table.contains(RelicsTaken, "hp_up") then
-            base.MaxHealth = base.MaxHealth + 3
+            base.MaxHealth = base.MaxHealth + 4
             base.Health = base.MaxHealth
         end
         ActiveMonBase = base
@@ -1540,13 +1574,10 @@ function Releasemon(mon)
                 )
                 local mult = 0
                 local totaldmg = 0
-                for i = 1, #closeEnemies do
-                    local v = {
+                for k = 1, #closeEnemies do
+                    local v = GetEnemyTypes(closeEnemies[k])
 
-                    }
-                    v = GetEnemyTypes(closeEnemies[i])
-
-                    local dmg = Getdmgstat(closeEnemies[i].GetComponent_EnemyBase_().livingId)
+                    local dmg = GetEnemydmgstat(closeEnemies[k].GetComponent_EnemyBase_().livingId)
                     local mod = TypeDamage(ActiveMonBase.livingId, v.primary, v.secondary, false)
                     if HasTeraOrbAugment and mod > 1 then
                         mod = 1
@@ -1721,7 +1752,7 @@ function GetClosestEnemyWithExcludes(Radius, Pos, onlyVisible, excludeInvincible
 end
 
 function GetFloorOfPokemonByNumber(name)
-    if string.find(name, "og") or string.find(name, "bg") or string.find(name, "sg")  then
+    if string.find(name, "og") or string.find(name, "bg") or string.find(name, "sg") then
         return 1
     end
     if string.find(name, "id") or string.find(name, "ns") then
@@ -1757,4 +1788,4 @@ function table.find(tbl, val)
     return -1
 end
 
-SHINYTESTING = false
+SHINYTESTING = true
