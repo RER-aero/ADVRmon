@@ -1,5 +1,5 @@
 function ADVR.onLoad()
-    achievement.psvrID = 500
+    achievement.psvrID = 50
     achievement.name = "Pokedex Completed"
     achievement.desc = "Catch every catchable enemy. <color=#c90808>(ADV</color><color=#1c1b1a>R</color><color=#cecece>MON)</color>"
 	achievement.hideDescription = false
@@ -19,12 +19,12 @@ function HasCaughtEveything()
   
    local list = GetList("EnemiesCaught")
 
-    return #list >= 77 - 9
+    return #list >= 66
 end
 function GetProgressInfo()
     local collected = GetList("EnemiesCaught")
 
-    return #collected, 77 - 9
+    return #collected, 66
 end
 
 function GetList(key)

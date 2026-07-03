@@ -1,5 +1,5 @@
 function ADVR.onLoad()
-    achievement.psvrID = 800
+    achievement.psvrID = 80
     achievement.name = "Grass Badge"
     achievement.desc = "Defeat the Overgrown Gatehouse with the Trainers Armament <color=#c90808>(ADV</color><color=#1c1b1a>R</color><color=#cecece>MON)</color>"
 	achievement.hideDescription = false

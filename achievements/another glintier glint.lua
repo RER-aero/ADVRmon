@@ -1,5 +1,5 @@
 function ADVR.onLoad()
-	achievement.psvrID = 1594
+	achievement.psvrID = 594
 	achievement.name = "A glintier glint"
 	achievement.desc = "Catch a shiny ruby slime <color=#c90808>(ADV</color><color=#1c1b1a>R</color><color=#cecece>MON)</color> <color=#888888>(Sh</color><color=#999999>ift</color><color=#aaaaaa>ing</color> <color=#68a86f>De</color><color=#55a15d>pt</color><color=#44944c>hs)</color>"
 	achievement.predecessors = {achievements.GOOD_LUCK,}

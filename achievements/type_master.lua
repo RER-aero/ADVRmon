@@ -1,5 +1,5 @@
 function ADVR.onLoad()
-    achievement.psvrID = 457
+    achievement.psvrID = 47
     achievement.name = "Type Master"
     achievement.desc = "Catch every type <color=#c90808>(ADV</color><color=#1c1b1a>R</color><color=#cecece>MON)</color>"
 	achievement.hideDescription = false

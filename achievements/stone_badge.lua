@@ -1,5 +1,5 @@
 function ADVR.onLoad()
-    achievement.psvrID = 805
+    achievement.psvrID = 85
     achievement.name = "Stone Badge"
     achievement.desc = "Defeat the Gloaming Mines with the Trainers Armament <color=#c90808>(ADV</color><color=#1c1b1a>R</color><color=#cecece>MON)</color>"
 	achievement.hideDescription = false

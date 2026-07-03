@@ -1,5 +1,5 @@
 function ADVR.onLoad()
-	achievement.psvrID = 999
+	achievement.psvrID = 99
     achievement.name = "That one sparkles!"
 	achievement.desc = "Find and catch a <color=#c8960c>Sh</color><color=#e8b84b>in</color><color=#f5d78e>y</color> enemy <color=#c90808>(ADV</color><color=#1c1b1a>R</color><color=#cecece>MON)</color>"
 	achievement.hideDescription = false
@@ -9,14 +9,23 @@ function ADVR.onLoad()
   
 end
 
-function ADVR.onPlayerDeath(playerLiving)
-	if game.LoadBool("CaughtShiny", false) == true then
-		achievement.Unlock()
+
+function ADVR.onPlayerDeathOrRunComplete()
+      if HasInList("EnemiesShinyCaught") then
+        achievement.Unlock()
+	  end
+end
+function ADVR.onSpawnInHomeBase()
+    if HasInList("EnemiesShinyCaught") then
+        achievement.Unlock()
 	end
 end
 
-function ADVR.onRunComplete()
-	if game.LoadBool("CaughtShiny", false) == true then
-		achievement.Unlock()
-	end
+
+
+
+function HasInList(key)
+    return GetList(key)
 end
+
+

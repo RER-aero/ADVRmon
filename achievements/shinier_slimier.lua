@@ -22,7 +22,7 @@ end
 
 function GetList(key)
     local raw = game.LoadString(key, "")
-  if raw == "" then return {} end
+  if raw == "" or raw == nil then return {} end
     local list = {}
     for entry in raw:gmatch("[^,]+") do
         table.insert(list, entry)

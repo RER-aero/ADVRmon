@@ -1,5 +1,5 @@
 function ADVR.onLoad()
-    achievement.psvrID = 803
+    achievement.psvrID = 83
     achievement.name = "Poison Badge"
     achievement.desc = "Defeat the Infested Dungeon with the Trainers Armament <color=#c90808>(ADV</color><color=#1c1b1a>R</color><color=#cecece>MON)</color>"
 	achievement.hideDescription = false
