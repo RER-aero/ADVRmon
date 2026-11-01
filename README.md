@@ -36,3 +36,6 @@ There is a small **effectiveness system** which will  boost or weaken your Pokem
 I warn you, just like the floors in that mod, the enemies shift too. When you catch a shifted enemy, they have a chance to shift themselves, whether into their abberrant  version or into an alternate version.
 
 - This mod will work in multiplayer, however it is intended for single player. You may notice that some features may not register for others or not work quite right, but for the most part its pretty fun.
+
+
+<img src="koi/koi.gif" width="256" alt="My koi" />

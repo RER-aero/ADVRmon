@@ -55,7 +55,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     NSsmolslime = { name = "enemy_ns_slime_tiny", primaryType = "slime", secondaryType = "poison", damage = 4, critchance = .25, attacktype = "melee", isFlying = false },
     NSspout = { name = "enemy_ns_poison_spitter", primaryType = "poison", secondaryType = "plant", damage = 5, critchance = .15, attacktype = "ranged", isFlying = false },
     NSwight = { name = "enemy_ns_wight_drowned", primaryType = "undead", secondaryType = "poison", damage = 5, critchance = .15, attacktype = "melee", isFlying = false },
-    queenfly = { name = "boss_fly_hive", primaryType = "bug", secondaryType = "poison", damage = 6, critchance = .35, attacktype = "melee", isFlying = true },
+    queenfly = { name = "boss_queen_fly", spawnAs = "boss_fly_hive", primaryType = "bug", secondaryType = "poison", damage = 6, critchance = .35, attacktype = "melee", isFlying = true },
     NSsprig = { name = "enemy_poi_poison_sentry", primaryType = "poison", secondaryType = "plant", damage = 5, critchance = .15, attacktype = "ranged", isFlying = false },
 
     FGtomeofmagic = { name = "enemy_fg_book", primaryType = "magic", secondaryType = "", damage = 3, critchance = .15, attacktype = "ranged", isFlying = false },
@@ -86,7 +86,7 @@ StatSheet = { --the types are as follows, slime, undead, poison, plant, magic, s
     GMskeletonminer = { name = "enemy_gm_skeleton_miner", primaryType = "undead", secondaryType = "steel", damage = 8, critchance = .10, attacktype = "melee", isFlying = false },
     GMskull = { name = "enemy_gm_possessed_skull", primaryType = "undead", secondaryType = "dark", damage = 5, critchance = .10, attacktype = "melee", isFlying = false },
     GMflower = { name = "enemy_gm_sentryplant", primaryType = "plant", secondaryType = "dark", damage = 4, critchance = .20, attacktype = "ranged", isFlying = false },
-    elderskeelton = { name = "boss_stone_skeleton", primaryType = "undead", secondaryType = "stone", damage = 7, critchance = .15, attacktype = "melee", isFlying = false },
+    elderskeelton = { name = "boss_elder_skeleton", spawnAs = "boss_stone_skeleton", primaryType = "undead", secondaryType = "stone", damage = 7, critchance = .15, attacktype = "melee", isFlying = false },
 
     cradleskull = { name = "enemy_bc_skull_darkness", primaryType = "undead", secondaryType = "dark", damage = 6, critchance = .10, attacktype = "melee", isFlying = true },
     beast = { name = "boss_the_beast_stage3", primaryType = "dark", secondaryType = "fire", damage = 6, critchance = .10, attacktype = "melee", isFlying = true },
@@ -600,6 +600,14 @@ function ADVR.onPickup()
 
     HasCherishBallAugment = augment ~= nil and augment.eventsRegistered
 
+    augment = game.progressHandler.GetProgressById("team_rocket_ball_tcg")
+
+    HasTCGRocketBall = augment ~= nil and augment.eventsRegistered
+
+    augment = game.progressHandler.GetProgressById("team_rocket_ball_anime")
+
+    HasAnimeRocketBall = augment ~= nil and augment.eventsRegistered
+
     if HasUltraBallAugment then
         BaseChanceForCatch = BaseChanceForCatch + .1
     end
@@ -612,6 +620,13 @@ function ADVR.onPickup()
     if HasShinyCharmAugment then
         BaseShinyChance = BaseShinyChance * 2
     end
+    if HasTCGRocketBall then
+        BaseChanceForCatch = BaseChanceForCatch - .075
+    end
+    if HasAnimeRocketBall then
+        BaseChanceForCatch = BaseChanceForCatch - .05
+    end
+
 
     if SHINYTESTING then
         BaseShinyChance = 100
@@ -1154,7 +1169,9 @@ function ActiveMonGetStats(mon, hp)
             ActiveMonStats.evasionChance = .05
         end
     end
-
+    if HasTCGRocketBall then
+        ActiveMonStats.damage = ActiveMonStats.damage + 3
+    end
     if table.contains(RelicsTaken, "choice_band") then
         ActiveMonStats.criticalChance = ActiveMonStats.criticalChance + .1
         ActiveMonStats.damage = ActiveMonStats.damage + 4
@@ -1464,6 +1481,10 @@ function Releasemon(mon)
                 mult = 5
             end
             ActiveMonObj.GetComponent_Transform_().localScale = ActiveMonObj.GetComponent_Transform_().localScale * mult
+        end
+        if HasAnimeRocketBall then
+             base.MaxHealth = math.ceil(base.MaxHealth * 1.35) + 1
+            base.Health = base.MaxHealth
         end
         if table.contains(RelicsTaken, "hp_up") then
             base.MaxHealth = base.MaxHealth + 4
