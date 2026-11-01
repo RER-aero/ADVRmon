@@ -55,6 +55,7 @@ local FLYING = "<color=#9dcad5>(Fl</color><color=#b5d8e2>yi</color><color=#cce2e
 local FIRE = "<color=#f95909>(Fi</color><color=#fb7c3a>re</color><color=#fdc49a>)</color>"
 local STEEL = "<color=#707a80>(St</color><color=#9aaab4>ee</color><color=#b5c1c9>l)</color>"
 local BUG = "<color=#6a8a1a>(B</color><color=#8fb52a>u</color><color=#b3d940>g</color><color=#c6ef56>)</color>"
+local ICE = "<color=#a0d8f1>(I</color><color=#c0e8f8>ce)</color>"
 
 
 function CatchStatus(catchName)
@@ -189,7 +190,7 @@ function ChangeNames()
     end
 end
 
--- the types are as follows, slime, undead, poison, plant, magic, stone, crystal, dark, flying, fire, steel
+-- the types are as follows, slime, undead, poison, plant, magic, stone, crystal, dark, flying, fire, steel, ice
 
 -- slime: #26ce21 <color=#0f5a0d>(S</color><color=#178514>l</color><color=#1ea819>i</color><color=#26ce21>m</color><color=#5cdc58>e)</color>
 -- undead: #59310b
@@ -203,7 +204,7 @@ end
 -- fire:  <color=#f95909>(Fi</color><color=#fb7c3a>re</color><color=#fdc49a>)</color>
 -- Steel: <color=#707a80>(St</color><color=#9aaab4>ee</color><color=#b5c1c9>l)</color>
 -- Bug:  <color=#6a8a1a>(B</color><color=#8fb52a>u</color><color=#b3d940>g</color><color=#c6ef56>)</color>
-
+-- Ice: <color=#a0d8f1>(I</color><color=#c0e8f8>ce)</color>
 -- Uncatchable: <color=#888888>[Uncatchable]</color>
 -- Not Caught: <color=#888888>[Not Caught]</color>
 -- Caught: <color=#ffffff>[Caught]</color>

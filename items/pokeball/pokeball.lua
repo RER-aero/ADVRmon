@@ -1266,6 +1266,20 @@ function TypeDamage(target, primary, secondary, MonAttack)
             modifier = modifier - 0.2
         end
     end
+     if primary == "ice" or secondary == "ice" then
+        if EnemyPrimaryType == "undead" or EnemySecondaryType == "undead" then
+            modifier = modifier + 0.15
+        end
+        if EnemyPrimaryType == "rock" or EnemySecondaryType == "rock" then
+            modifier = modifier + 0.10
+        end
+        if EnemyPrimaryType == "fire" or EnemySecondaryType == "fire" then
+            modifier = modifier - 0.5
+        end
+        if EnemyPrimaryType == "magic" or EnemySecondaryType == "magic" then
+            modifier = modifier - 0.10
+        end
+    end
     if primary == "undead" or secondary == "undead" then
         if EnemyPrimaryType == "undead" or EnemySecondaryType == "undead" then
             modifier = modifier + 0.2
@@ -1385,10 +1399,13 @@ function TypeDamage(target, primary, secondary, MonAttack)
     end
     if primary == "fire" or secondary == "fire" then
         if EnemyPrimaryType == "plant" or EnemySecondaryType == "plant" then
-            modifier = modifier + 0.22
+            modifier = modifier + 0.18
         end
         if EnemyPrimaryType == "steel" or EnemySecondaryType == "steel" then
             modifier = modifier + 0.05
+        end
+         if EnemyPrimaryType == "ice" or EnemySecondaryType == "ice" then
+            modifier = modifier + 0.35
         end
         if EnemyPrimaryType == "bug" or EnemySecondaryType == "bug" then
             modifier = modifier + 0.12
