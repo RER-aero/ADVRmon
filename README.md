@@ -1,8 +1,8 @@
 INFO:
 ------------------------------------------------------------------------------------------
 Install instructions:
-Download the zip file and drag and drop into your ADVR_Mods folder
-For more info look here: https://ancient-dungeon-vr.fandom.com/wiki/Enabling_Mods_in_ADVR
+Download the zip file and drag and drop into your ADVR_Mods folder   
+- For more info look here: https://ancient-dungeon-vr.fandom.com/wiki/Enabling_Mods_in_ADVR
 ------------------------------------------------------------------------------------------
 ### Description:
 
